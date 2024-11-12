@@ -25,8 +25,11 @@ class _startState extends State<start> {
     database = openDatabase(
       join(await getDatabasesPath(), 'userSample.db'),
       onCreate: (db, version){
-        return db.execute(
+        db.execute(
           'CREATE TABLE users (id integer PRIMARY KEY, name text, age integer, email text, password text, bloodType text)',
+        );
+        db.execute(
+          'CREATE TABLE events (id integer PRIMARY KEY, name text, address text, eventDate date, startTime text, endTime text)'
         );
       },
       version: 1,

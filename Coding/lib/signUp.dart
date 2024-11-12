@@ -136,6 +136,7 @@ class _signUpState extends State<signUp> {
                         filled: true,
                         fillColor: Color(0xFFFFECDE),
                       ),
+                      obscureText: true,
                       controller: passwordController,
                     ),
                     SizedBox(height: 10,),

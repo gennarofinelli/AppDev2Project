@@ -113,6 +113,7 @@ class _loginState extends State<login> {
                         filled: true,
                         fillColor: Color(0xFFFFECDE),
                       ),
+                      obscureText: true,
                       controller: passwordController,
                     ),
                     SizedBox(height: 10,),
@@ -123,7 +124,7 @@ class _loginState extends State<login> {
                         bool loginStatus = await _loginUser(email, password);
                         User user = await _getUser(email, password);
                         if(loginStatus){
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: user, selectIndex: 0,)));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: user, selectIndex: 0, database: widget.database,)));
                         } else {
                           SnackBar(
                             content: Text('Incorrect Username or Password!', style: TextStyle(fontSize: 16),),

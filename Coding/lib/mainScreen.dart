@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'user.dart';
 import 'home.dart';
 import 'events.dart';
@@ -6,10 +8,11 @@ import 'notifications.dart';
 import 'profile.dart';
 
 class mainScreen extends StatefulWidget {
+  late Future<Database> database;
   late User user;
   int? selectIndex = 0;
 
-  mainScreen({required this.user, this.selectIndex});
+  mainScreen({required this.user, this.selectIndex, required this.database});
 
   @override
   State<mainScreen> createState() => _mainScreenState();
@@ -21,8 +24,8 @@ class _mainScreenState extends State<mainScreen> {
   @override
   void initState() {
     _widgetOptions = [
-      home(user: widget.user),
-      events(),
+      home(user: widget.user, database: widget.database,),
+      events(database: widget.database,),
       notifications(),
       profile(),
     ];
