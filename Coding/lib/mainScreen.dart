@@ -6,6 +6,8 @@ import 'home.dart';
 import 'events.dart';
 import 'notifications.dart';
 import 'profile.dart';
+import 'register.dart';
+import 'start.dart';
 
 class mainScreen extends StatefulWidget {
   late Future<Database> database;
@@ -110,11 +112,7 @@ class _mainScreenState extends State<mainScreen> {
               leading: Icon(Icons.lock),
               title: Text("Logout"),
               onTap: (){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('You have been logged out.'),
-                  ),
-                );
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>start()));
               },
               trailing: Icon(Icons.arrow_right),
             ),

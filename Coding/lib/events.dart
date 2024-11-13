@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'event.dart';
+import 'register.dart';
 
 class events extends StatefulWidget {
   late Future<Database> database;
@@ -13,6 +15,7 @@ class events extends StatefulWidget {
 
 class _EventsState extends State<events> {
   List<DateTime> eventDates = [];
+  List<Event> events = [];
 
   @override
   void initState() {
@@ -21,30 +24,35 @@ class _EventsState extends State<events> {
   }
 
   Future<void> _addEvents() async {
+    _fetchEventDates();
+    _fetchEvents();
+
     final db = await widget.database;
-    await db.insert(
-      'events',
-      {
-        'name': 'Hero\'s Drive',
-        'address': '11855 Av. Andre Dumas',
-        'eventDate': '2024-11-21',
-        'startTime': '10:00 AM',
-        'endTime': '2:00 PM',
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    await db.insert(
-      'events',
-      {
-        'name': 'Donate & Glow',
-        'address': '11854 Av. Andre Dumas',
-        'eventDate': '2024-12-05',
-        'startTime': '11:00 AM',
-        'endTime': '3:00 PM',
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    _fetchEventDates(); // Refresh the event dates after adding events
+
+    if(events.isEmpty){
+      await db.insert(
+        'events',
+        {
+          'name': 'Hero\'s Drive',
+          'address': '11855 Av. Andre Dumas',
+          'eventDate': '2024-11-21',
+          'startTime': '10:00 AM',
+          'endTime': '2:00 PM',
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      await db.insert(
+        'events',
+        {
+          'name': 'Donate & Glow',
+          'address': '11854 Av. Andre Dumas',
+          'eventDate': '2024-12-05',
+          'startTime': '11:00 AM',
+          'endTime': '3:00 PM',
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   Future<void> _fetchEventDates() async {
@@ -55,6 +63,26 @@ class _EventsState extends State<events> {
       eventDates = maps.map((event) {
         return DateTime.parse(event['eventDate']);
       }).toList();
+    });
+  }
+
+  Future<void> _fetchEvents() async {
+    final db = await widget.database;
+    final List<Map<String, dynamic>> maps = await db.query('events');
+
+    setState(() {
+      events = List.generate(
+        maps.length,
+          (i){
+            return Event(
+                date: maps[i]['eventDate'],
+                name: maps[i]['name'],
+                address: maps[i]['address'],
+                startTime: maps[i]['startTime'],
+                endTime: maps[i]['endTime']
+            );
+          }
+      );
     });
   }
 
@@ -156,6 +184,52 @@ class _EventsState extends State<events> {
               ],
             ),
           ),
+          SizedBox(height: 10,),
+          Text("Upcoming Dates", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10,),
+          Expanded(
+            child: ListView.builder(
+              itemCount: eventDates.length,
+              itemBuilder: (context, index){
+                final eventDate = eventDates[index];
+                final event = events[index];
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                        top: BorderSide(color: Colors.black, width: 2),
+                        bottom: BorderSide(color: Colors.black, width: 2),
+                        ),
+                      ),
+                      child: Card(
+                        color: Color(0xFFFFECDE),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                        child: ListTile(
+                          leading: Text(eventDate.day.toString()),
+                          title: Text(event.name),
+                          trailing: ElevatedButton(
+                            onPressed: (){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => register(event: event)));
+                            },
+                            child: Text("Register", style: TextStyle(color: Colors.black, fontSize: 16),),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              side: BorderSide(color: Colors.black, width: 3)
+                              ),
+                              backgroundColor: Color(0xFFB44343),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                  ],
+                );
+              },
+            ),
+          )
         ],
       ),
     );
