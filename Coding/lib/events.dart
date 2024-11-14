@@ -20,13 +20,12 @@ class _EventsState extends State<events> {
   @override
   void initState() {
     super.initState();
+    _fetchEventDates();
+    _fetchEvents();
     _addEvents();
   }
 
   Future<void> _addEvents() async {
-    _fetchEventDates();
-    _fetchEvents();
-
     final db = await widget.database;
 
     if(events.isEmpty){
@@ -59,31 +58,35 @@ class _EventsState extends State<events> {
     final db = await widget.database;
     final List<Map<String, dynamic>> maps = await db.query('events');
 
-    setState(() {
-      eventDates = maps.map((event) {
-        return DateTime.parse(event['eventDate']);
-      }).toList();
-    });
+    if(events.isEmpty) {
+      setState(() {
+        eventDates = maps.map((event) {
+          return DateTime.parse(event['eventDate']);
+        }).toList();
+      });
+    }
   }
 
   Future<void> _fetchEvents() async {
     final db = await widget.database;
     final List<Map<String, dynamic>> maps = await db.query('events');
 
-    setState(() {
-      events = List.generate(
-        maps.length,
-          (i){
-            return Event(
-                date: maps[i]['eventDate'],
-                name: maps[i]['name'],
-                address: maps[i]['address'],
-                startTime: maps[i]['startTime'],
-                endTime: maps[i]['endTime']
-            );
-          }
-      );
-    });
+    if(events.isEmpty) {
+      setState(() {
+        events = List.generate(
+            maps.length,
+                (i) {
+              return Event(
+                  date: maps[i]['eventDate'],
+                  name: maps[i]['name'],
+                  address: maps[i]['address'],
+                  startTime: maps[i]['startTime'],
+                  endTime: maps[i]['endTime']
+              );
+            }
+        );
+      });
+    }
   }
 
   DateTime _selectedDate = DateTime.now();
@@ -190,33 +193,43 @@ class _EventsState extends State<events> {
           Expanded(
             child: ListView.builder(
               itemCount: eventDates.length,
-              itemBuilder: (context, index){
+              itemBuilder: (context, index) {
+                if (index >= events.length) {
+                  return SizedBox(); // Return an empty widget if events list is shorter than eventDates
+                }
+
                 final eventDate = eventDates[index];
                 final event = events[index];
+
                 return Column(
                   children: [
                     Container(
                       decoration: BoxDecoration(
+                        color: Color(0xFFFFECDE),
                         border: Border(
-                        top: BorderSide(color: Colors.black, width: 2),
-                        bottom: BorderSide(color: Colors.black, width: 2),
+                          top: BorderSide(color: Colors.black, width: 2),
+                          bottom: BorderSide(color: Colors.black, width: 2),
                         ),
                       ),
                       child: Card(
                         color: Color(0xFFFFECDE),
+                        elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: ListTile(
                           leading: Text(eventDate.day.toString()),
                           title: Text(event.name),
                           trailing: ElevatedButton(
-                            onPressed: (){
+                            onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(builder: (context) => register(event: event)));
                             },
-                            child: Text("Register", style: TextStyle(color: Colors.black, fontSize: 16),),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(color: Colors.black, fontSize: 16),
+                            ),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                              side: BorderSide(color: Colors.black, width: 3)
+                                borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(color: Colors.black, width: 3),
                               ),
                               backgroundColor: Color(0xFFB44343),
                             ),
@@ -224,7 +237,7 @@ class _EventsState extends State<events> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5,),
+                    SizedBox(height: 5),
                   ],
                 );
               },

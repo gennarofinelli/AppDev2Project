@@ -28,8 +28,8 @@ class _mainScreenState extends State<mainScreen> {
     _widgetOptions = [
       home(user: widget.user, database: widget.database,),
       events(database: widget.database,),
-      notifications(),
-      profile(),
+      notifications(database: widget.database,),
+      profile(database: widget.database, user: widget.user,),
     ];
   }
 
