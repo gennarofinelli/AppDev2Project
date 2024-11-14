@@ -29,7 +29,7 @@ class _splashState extends State<splash> {
 
   @override
   void initState() {
-    Timer(Duration(seconds: 2), (){
+    Timer(Duration(seconds: 5), (){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>start()));
     });
   }
