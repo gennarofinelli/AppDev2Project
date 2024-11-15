@@ -9,6 +9,7 @@ import 'profile.dart';
 import 'register.dart';
 import 'start.dart';
 import 'changePassword.dart';
+import 'settings.dart';
 
 class mainScreen extends StatefulWidget {
   late Future<Database> database;
@@ -104,8 +105,7 @@ class _mainScreenState extends State<mainScreen> {
               leading: Icon(Icons.settings),
               title: Text("Settings"),
               onTap: (){
-                // Navigator.push(context,MaterialPageRoute(builder:
-                //     (context)=> Settings()));
+                //Navigator.push(context,MaterialPageRoute(builder: (context)=> settings()));
               },
               trailing: Icon(Icons.arrow_right),
             ),
@@ -113,7 +113,7 @@ class _mainScreenState extends State<mainScreen> {
               leading: Icon(Icons.lock),
               title: Text("Logout"),
               onTap: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>start()));
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
               },
               trailing: Icon(Icons.arrow_right),
             ),

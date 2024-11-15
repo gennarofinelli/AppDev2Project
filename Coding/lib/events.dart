@@ -20,9 +20,9 @@ class _EventsState extends State<events> {
   @override
   void initState() {
     super.initState();
+    _addEvents();
     _fetchEventDates();
     _fetchEvents();
-    _addEvents();
   }
 
   Future<void> _addEvents() async {

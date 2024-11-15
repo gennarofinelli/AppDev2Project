@@ -15,6 +15,16 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
+
+  Future<void> _deleteUser() async{
+    final db = await widget.database;
+    await db.delete(
+      'users',
+      where: 'email = ? AND password = ?',
+      whereArgs: [widget.user.email, widget.user.password]
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -88,7 +98,7 @@ class _profileState extends State<profile> {
                 title: Text("Logout: "),
                 trailing: ElevatedButton(
                   onPressed: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => start()));
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                   },
                   child: Text("Logout", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
@@ -118,7 +128,44 @@ class _profileState extends State<profile> {
               child: ListTile(
                 title: ElevatedButton(
                   onPressed: (){
-                    //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>start()));
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Delete Account"),
+                          content: Text("Are you sure you want to delete account?"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                              onPressed: (){
+                                _deleteUser();
+                                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
+                              },
+                              child: Text("Yes", style: TextStyle(color: Colors.black),),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                    side: BorderSide(color: Colors.black, width: 3)
+                                ),
+                                backgroundColor: Color(0xFFB44343),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: (){
+                                Navigator.pop(context);
+                              },
+                              child: Text("No", style: TextStyle(color: Colors.black),),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                    side: BorderSide(color: Colors.black, width: 3)
+                                ),
+                                backgroundColor: Color(0xFFB44343),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Text("Delete Account", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
