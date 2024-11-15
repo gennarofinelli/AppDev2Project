@@ -9,7 +9,7 @@ import 'profile.dart';
 import 'register.dart';
 import 'start.dart';
 import 'changePassword.dart';
-import 'settings.dart';
+//import 'settings.dart';
 
 class mainScreen extends StatefulWidget {
   late Future<Database> database;
