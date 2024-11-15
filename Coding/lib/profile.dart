@@ -88,7 +88,7 @@ class _profileState extends State<profile> {
                 title: Text("Logout: "),
                 trailing: ElevatedButton(
                   onPressed: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => start()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => start()));
                   },
                   child: Text("Logout", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
