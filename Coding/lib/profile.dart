@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:project/changePassword.dart';
 import 'package:sqflite/sqflite.dart';
 import 'user.dart';
 import 'start.dart';
@@ -56,7 +57,7 @@ class _profileState extends State<profile> {
                 title: Text("Password: "),
                 trailing: ElevatedButton(
                   onPressed: (){
-                    // Navigator.of(context).push(MaterialPageRoute(builder: (context) => register(event: event)));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => changePassword(database: widget.database, user: widget.user),));
                   },
                   child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
