@@ -8,6 +8,7 @@ import 'notifications.dart';
 import 'profile.dart';
 import 'register.dart';
 import 'start.dart';
+import 'changePassword.dart';
 
 class mainScreen extends StatefulWidget {
   late Future<Database> database;
