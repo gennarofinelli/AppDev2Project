@@ -113,7 +113,7 @@ class _mainScreenState extends State<mainScreen> {
               leading: Icon(Icons.lock),
               title: Text("Logout"),
               onTap: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>start()));
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
               },
               trailing: Icon(Icons.arrow_right),
             ),

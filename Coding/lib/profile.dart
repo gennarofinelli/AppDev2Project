@@ -98,7 +98,7 @@ class _profileState extends State<profile> {
                 title: Text("Logout: "),
                 trailing: ElevatedButton(
                   onPressed: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => start()));
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                   },
                   child: Text("Logout", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
@@ -138,7 +138,7 @@ class _profileState extends State<profile> {
                             ElevatedButton(
                               onPressed: (){
                                 _deleteUser();
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => start()));
+                                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                               },
                               child: Text("Yes", style: TextStyle(color: Colors.black),),
                               style: ElevatedButton.styleFrom(
