@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:project/changePassword.dart';
+import 'changePassword.dart';
 import 'package:sqflite/sqflite.dart';
 import 'user.dart';
 import 'start.dart';

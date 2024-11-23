@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'home.dart';
 import 'user.dart';
 import 'mainScreen.dart';
+import 'adminMain.dart';
 
 class login extends StatefulWidget {
   late Future<Database> database;
@@ -58,6 +59,14 @@ class _loginState extends State<login> {
       whereArgs: [email,password],
     );
     if(result.isNotEmpty){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  bool _loginAdmin(String email, String password){
+    if(email == 'admin' && password == 'admin'){
       return true;
     }else{
       return false;
@@ -122,10 +131,12 @@ class _loginState extends State<login> {
                         String email = emailController.text;
                         String password = passwordController.text;
                         bool loginStatus = await _loginUser(email, password);
-                        User user = await _getUser(email, password);
                         if(loginStatus){
+                          User user = await _getUser(email, password);
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: user, selectIndex: 0, database: widget.database,)));
-                        } else {
+                        } else if (_loginAdmin(email, password)){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0, database: widget.database,)));
+                        }else {
                           SnackBar(
                             content: Text('Incorrect Username or Password!', style: TextStyle(fontSize: 16),),
                             duration: Duration(seconds: 2), // Duration for Snackbar display
