@@ -32,19 +32,21 @@ class _notificationsState extends State<notifications> {
 
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        String id = doc.id; // Firestore document ID
 
-        // Convert event data to Event object and add to fetchedEventData
-        Event event = Event.fromMap(data);
+        // Convert event data to Event object
+        Event event = Event.fromMapWithID(data, id);
         fetchedEventData.add(event.toMap());
 
-        // Parse the date field and add it to fetchedEventDates
-        DateTime eventDate = DateTime.parse(event.date);
+        // Parse the date string to DateTime
+        DateTime eventDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(
+            event.date);
         fetchedEventDates.add(eventDate);
       }
 
       setState(() {
         eventDates = fetchedEventDates; // Update the list of event dates
-        eventData = fetchedEventData;   // Update the list of event data
+        eventData = fetchedEventData; // Update the list of event data
       });
     } catch (e) {
       print('Error fetching event dates: $e');

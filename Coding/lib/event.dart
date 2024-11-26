@@ -1,32 +1,48 @@
-class Event{
-  String date;
+class Event {
+  String? id;
   String name;
   String address;
+  String date;
   String startTime;
   String endTime;
 
   Event({
-    required this.date,
+    this.id,
     required this.name,
     required this.address,
+    required this.date,
     required this.startTime,
-    required this.endTime
+    required this.endTime,
   });
 
-  Event.fromMap(Map<String, dynamic> result)
-      : date = result['eventDate'],
-        name = result['name'],
-        address = result['address'],
-        startTime = result['startTime'],
-        endTime = result['endTime'];
+  factory Event.fromMap(Map<String, dynamic> data) {
+    return Event(
+      name: data['name'] ?? '',
+      address: data['address'] ?? '',
+      date: data['date'] ?? '',
+      startTime: data['startTime'] ?? '',
+      endTime: data['endTime'] ?? '',
+    );
+  }
 
-  Map<String, Object?> toMap() {
+  factory Event.fromMapWithID(Map<String, dynamic> data, String id) {
+    return Event(
+      id: id,
+      name: data['name'] ?? '',
+      address: data['address'] ?? '',
+      date: data['date'] ?? '',
+      startTime: data['startTime'] ?? '',
+      endTime: data['endTime'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap() {
     return {
-      'eventDate': date,
       'name': name,
       'address': address,
+      'date': date,
       'startTime': startTime,
-      'endTime' : endTime,
+      'endTime': endTime,
     };
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'event.dart';
+import 'adminMain.dart';
 
 class adminEvent extends StatefulWidget {
   const adminEvent({super.key});
@@ -80,6 +82,8 @@ class _adminEventState extends State<adminEvent> {
       'startTime' : start,
       'endTime' : end,
     });
+
+    _fetchEventDates();
   }
 
   Future<void> _fetchEventDates() async {
@@ -90,19 +94,21 @@ class _adminEventState extends State<adminEvent> {
 
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        String id = doc.id; // Firestore document ID
 
-        // Convert event data to Event object and add to fetchedEventData
-        Event event = Event.fromMap(data);
+        // Convert event data to Event object
+        Event event = Event.fromMapWithID(data, id);
         fetchedEventData.add(event.toMap());
 
-        // Parse the date field and add it to fetchedEventDates
-        DateTime eventDate = DateTime.parse(event.date);
+        // Parse the date string to DateTime
+        DateTime eventDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(
+            event.date);
         fetchedEventDates.add(eventDate);
       }
 
       setState(() {
         eventDates = fetchedEventDates; // Update the list of event dates
-        eventData = fetchedEventData;   // Update the list of event data
+        eventData = fetchedEventData; // Update the list of event data
       });
     } catch (e) {
       print('Error fetching event dates: $e');
@@ -237,6 +243,7 @@ class _adminEventState extends State<adminEvent> {
                         onPressed: (){
                           setState(() {
                             _addEvent(nameController.text, addressController.text, selectedDate.toString(), startTime.toString(), endTime.toString());
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0,)));
                           });
                         },
                         child: Text("Add Event", style: TextStyle(color: Colors.black, fontSize: 18),),
