@@ -4,9 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 import 'register.dart';
+import 'user.dart';
 
 class events extends StatefulWidget {
-  const events({super.key});
+  late User user;
+
+  events({required this.user});
 
   @override
   State<events> createState() => _EventsState();
@@ -187,7 +190,7 @@ class _EventsState extends State<events> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => register(event: Event.fromMap(event)), // Pass the Event object
+                                  builder: (context) => register(event: Event.fromMap(event), user: widget.user,), // Pass the Event object
                                 ),
                               );
                             },

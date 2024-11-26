@@ -3,18 +3,32 @@ import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
+import 'user.dart';
 
 class register extends StatefulWidget {
   late Event event;
+  late User user;
 
-  register({required this.event});
+  register({required this.event, required this.user});
 
   @override
   State<register> createState() => _registerState();
 }
 
 class _registerState extends State<register> {
+  final Stream<QuerySnapshot> _taskStream =
+  FirebaseFirestore.instance.collection('Registrations').snapshots();
+
+  CollectionReference registrations = FirebaseFirestore.instance.collection('Registrations');
+
   bool agreed = false;
+
+  Future<void> _addRegistration() async{
+    await registrations.add({
+      'eventName' : widget.event.name,
+      'userName' : widget.user.name,
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +169,15 @@ class _registerState extends State<register> {
               width: 200,
               child: ElevatedButton(
                 onPressed: (){
-
+                  if(agreed){
+                    _addRegistration();
+                    Navigator.of(context).pop();
+                  } else {
+                    SnackBar(
+                      content: Text('Agree to the terms before registering!', style: TextStyle(fontSize: 16),),
+                      duration: Duration(seconds: 2), // Duration for Snackbar display
+                    );
+                  }
                 },
                 child: Text("Register", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),),
                 style: ElevatedButton.styleFrom(

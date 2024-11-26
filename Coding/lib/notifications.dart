@@ -4,9 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 import 'register.dart';
+import 'user.dart';
 
 class notifications extends StatefulWidget {
-  const notifications({super.key});
+  late User user;
+
+  notifications({required this.user});
 
   @override
   State<notifications> createState() => _notificationsState();
@@ -103,7 +106,7 @@ class _notificationsState extends State<notifications> {
                                         onPressed: () {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
-                                              builder: (context) => register(event: event),
+                                              builder: (context) => register(event: event, user: widget.user,),
                                             ),
                                           );
                                         },
