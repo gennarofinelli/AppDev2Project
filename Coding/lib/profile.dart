@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'changePassword.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 import 'start.dart';
 
 class profile extends StatefulWidget {
-  late Future<Database> database;
   late User user;
-  profile({required this.database, required this.user});
+  profile({required this.user});
 
   @override
   State<profile> createState() => _profileState();
 }
 
 class _profileState extends State<profile> {
+  CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
-  Future<void> _deleteUser() async{
-    final db = await widget.database;
-    await db.delete(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [widget.user.email, widget.user.password]
-    );
+  Future<void> _deleteUser(String email) async {
+    try {
+      var querySnapshot = await users.where('email', isEqualTo: email).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        var userDoc = querySnapshot.docs.first;
+        await users.doc(userDoc.id).delete();
+      } else {
+        print("User with this email does not exist.");
+      }
+    } catch (e) {
+      print("Error deleting user: $e");
+    }
   }
 
   @override
@@ -67,7 +73,7 @@ class _profileState extends State<profile> {
                 title: Text("Password: "),
                 trailing: ElevatedButton(
                   onPressed: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => changePassword(database: widget.database, user: widget.user),));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => changePassword(user: widget.user),));
                   },
                   child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
@@ -137,7 +143,7 @@ class _profileState extends State<profile> {
                           actions: <Widget>[
                             ElevatedButton(
                               onPressed: (){
-                                _deleteUser();
+                                _deleteUser(widget.user.email);
                                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                               },
                               child: Text("Yes", style: TextStyle(color: Colors.black),),

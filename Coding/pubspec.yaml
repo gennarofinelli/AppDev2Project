@@ -30,9 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite: any
-  path_provider: any
-  path: any
+  firebase_core: any
+  cloud_firestore: any
+  firebase_core_platform_interface: any
   intl: any
 
 

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 import 'start.dart';
 
 class changePassword extends StatefulWidget {
-  late Future<Database> database;
   late User user;
-  changePassword({required this.database, required this.user});
+  changePassword({required this.user});
 
   @override
   State<changePassword> createState() => _changePasswordState();
@@ -19,6 +18,8 @@ class _changePasswordState extends State<changePassword> {
 
   String? currentPassword; // Store the user's current password
 
+  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
   @override
   void initState() {
     super.initState();
@@ -26,23 +27,37 @@ class _changePasswordState extends State<changePassword> {
   }
 
   Future<void> _fetchCurrentPassword() async {
-    final db = await widget.database;
+    try {
+      // Fetch the user's document by ID
+      DocumentSnapshot userDoc = await users.doc(widget.user.id).get();
 
-    // Retrieve the user's current password from the database using their ID
-    final List<Map<String, dynamic>> result = await db.query(
-      'users',
-      columns: ['password'],
-      where: 'id = ?', // Filter by the user ID
-      whereArgs: [widget.user.id],
-    );
-
-    if (result.isNotEmpty) {
-      setState(() {
-        currentPassword = result.first['password']; // Store the current password
-      });
+      if (userDoc.exists) {
+        setState(() {
+          currentPassword = userDoc['password']; // Store the current password
+        });
+      } else {
+        print('User document not found!');
+      }
+    } catch (e) {
+      print('Error fetching current password: $e');
     }
   }
 
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      // Update the password in the Firestore document
+      await users.doc(widget.user.id).update({
+        'password': newPassword,
+      });
+
+      // Update the current password stored in the state
+      setState(() {
+        currentPassword = newPassword;
+      });
+    } catch (e) {
+      print('Error updating password: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,21 +172,5 @@ class _changePasswordState extends State<changePassword> {
         ),
       ),
     );
-  }
-  Future<void> updatePassword(String newPassword) async {
-    final db = await widget.database;
-
-    // Assuming you have an 'id' field in the user table to identify the user
-    await db.update(
-      'users', // Your user table name
-      {'password': newPassword}, // Update the password field
-      where: 'id = ?', // Filter condition
-      whereArgs: [widget.user.id], // Replace with actual user ID
-    );
-
-    // Update the current password stored in the state to the new one
-    setState(() {
-      currentPassword = newPassword;
-    });
   }
 }

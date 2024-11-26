@@ -1,67 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 
 class adminHome extends StatefulWidget {
-  late Future<Database> database;
-  adminHome({required this.database});
+  const adminHome({super.key});
 
   @override
   State<adminHome> createState() => _adminHomeState();
 }
 
 class _adminHomeState extends State<adminHome> {
+  CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
+
   List<DateTime> eventDates = [];
-  List<Event> events = [];
+  List<Map<String, dynamic>> eventData = [];
 
   @override
   void initState() {
     super.initState();
+
     _fetchEventDates();
-    _fetchEvents();
   }
 
   Future<void> _fetchEventDates() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
+    try {
+      QuerySnapshot querySnapshot = await eventsCollection.get();
+      List<DateTime> fetchedEventDates = [];
+      List<Map<String, dynamic>> fetchedEventData = [];
 
-    setState(() {
-      eventDates = maps.map((event) {
-        return DateTime.parse(event['eventDate']);
-      }).toList();
-    });
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        // Convert event data to Event object and add to fetchedEventData
+        Event event = Event.fromMap(data);
+        fetchedEventData.add(event.toMap());
+
+        // Parse the date field and add it to fetchedEventDates
+        DateTime eventDate = DateTime.parse(event.date);
+        fetchedEventDates.add(eventDate);
+      }
+
+      setState(() {
+        eventDates = fetchedEventDates; // Update the list of event dates
+        eventData = fetchedEventData;   // Update the list of event data
+      });
+    } catch (e) {
+      print('Error fetching event dates: $e');
+    }
   }
 
-  Future<void> _fetchEvents() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
-
-    setState(() {
-      events = List.generate(
-          maps.length,
-              (i) {
-            return Event(
-                date: maps[i]['eventDate'],
-                name: maps[i]['name'],
-                address: maps[i]['address'],
-                startTime: maps[i]['startTime'],
-                endTime: maps[i]['endTime']
-            );
-          }
-      );
-    });
-  }
-
-  Future<void> _deleteEvent(String eventName) async{
-    final db = await widget.database;
-
-    await db.delete(
-      'events',
-      where: 'name = ?',
-      whereArgs: [eventName]
-    );
+  Future<void> _deleteEvent(String id) async{
+    await eventsCollection.doc(id).delete();
+    _fetchEventDates();
   }
 
   @override
@@ -74,14 +66,11 @@ class _adminHomeState extends State<adminHome> {
           SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
-              itemCount: eventDates.length,
+              itemCount: eventData.length,
               itemBuilder: (context, index) {
-                if (index >= events.length) {
-                  return SizedBox(); // Return an empty widget if events list is shorter than eventDates
-                }
-
+                final event = eventData[index];
                 final eventDate = eventDates[index];
-                final event = events[index];
+                final eventName = event['name']; // Adjust this based on your event data structure
 
                 return Column(
                   children: [
@@ -98,8 +87,9 @@ class _adminHomeState extends State<adminHome> {
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: ListTile(
-                          leading: Text(eventDate.day.toString()),
-                          title: Text(event.name),
+                          leading: Text(DateFormat('dd').format(eventDate)), // Display day of the month
+                          title: Text(eventName),
+                          subtitle: Text(DateFormat('yyyy-MM-dd').format(eventDate)), // Display the event date
                           trailing: ElevatedButton(
                             onPressed: () {
                               showDialog(
@@ -110,28 +100,28 @@ class _adminHomeState extends State<adminHome> {
                                     content: Text("Are you sure you want to delete this event?"),
                                     actions: <Widget>[
                                       ElevatedButton(
-                                        onPressed: (){
-                                          _deleteEvent(event.name);
+                                        onPressed: () {
+                                          _deleteEvent(event['id']); // Assuming 'id' is the identifier
                                           Navigator.pop(context);
                                         },
-                                        child: Text("Yes", style: TextStyle(color: Colors.black),),
+                                        child: Text("Yes", style: TextStyle(color: Colors.black)),
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(25),
-                                              side: BorderSide(color: Colors.black, width: 3)
+                                            borderRadius: BorderRadius.circular(25),
+                                            side: BorderSide(color: Colors.black, width: 3),
                                           ),
                                           backgroundColor: Color(0xFFB44343),
                                         ),
                                       ),
                                       ElevatedButton(
-                                        onPressed: (){
+                                        onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: Text("No", style: TextStyle(color: Colors.black),),
+                                        child: Text("No", style: TextStyle(color: Colors.black)),
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(25),
-                                              side: BorderSide(color: Colors.black, width: 3)
+                                            borderRadius: BorderRadius.circular(25),
+                                            side: BorderSide(color: Colors.black, width: 3),
                                           ),
                                           backgroundColor: Color(0xFFB44343),
                                         ),
@@ -141,7 +131,7 @@ class _adminHomeState extends State<adminHome> {
                                 },
                               );
                             },
-                            child: Icon(Icons.delete, color: Colors.black,),
+                            child: Icon(Icons.delete, color: Colors.black),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),

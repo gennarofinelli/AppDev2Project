@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 
 class adminEvent extends StatefulWidget {
-  late Future<Database> database;
-  adminEvent({required this.database});
+  const adminEvent({super.key});
 
   @override
   State<adminEvent> createState() => _adminEventState();
 }
 
 class _adminEventState extends State<adminEvent> {
+  CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
+
   List<DateTime> eventDates = [];
-  List<Event> events = [];
+  List<Map<String, dynamic>> eventData = [];
+
   late TextEditingController nameController;
   late TextEditingController addressController;
   DateTime? selectedDate;
@@ -71,52 +73,40 @@ class _adminEventState extends State<adminEvent> {
   }
 
   Future<void> _addEvent(String name, String address, String date, String start, String end) async {
-    final db = await widget.database;
-    await db.insert(
-      'events',
-      {
-        'name': name,
-        'address': address,
-        'eventDate': date,
-        'startTime': start,
-        'endTime': end,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-
-    _fetchEvents();
-    _fetchEventDates();
+    await eventsCollection.add({
+      'name' : name,
+      'address' : address,
+      'date' : date,
+      'startTime' : start,
+      'endTime' : end,
+    });
   }
 
   Future<void> _fetchEventDates() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
+    try {
+      QuerySnapshot querySnapshot = await eventsCollection.get();
+      List<DateTime> fetchedEventDates = [];
+      List<Map<String, dynamic>> fetchedEventData = [];
 
-    setState(() {
-      eventDates = maps.map((event) {
-        return DateTime.parse(event['eventDate']);
-      }).toList();
-    });
-  }
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-  Future<void> _fetchEvents() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
+        // Convert event data to Event object and add to fetchedEventData
+        Event event = Event.fromMap(data);
+        fetchedEventData.add(event.toMap());
 
-    setState(() {
-      events = List.generate(
-          maps.length,
-              (i) {
-            return Event(
-                date: maps[i]['eventDate'],
-                name: maps[i]['name'],
-                address: maps[i]['address'],
-                startTime: maps[i]['startTime'],
-                endTime: maps[i]['endTime']
-            );
-          }
-      );
-    });
+        // Parse the date field and add it to fetchedEventDates
+        DateTime eventDate = DateTime.parse(event.date);
+        fetchedEventDates.add(eventDate);
+      }
+
+      setState(() {
+        eventDates = fetchedEventDates; // Update the list of event dates
+        eventData = fetchedEventData;   // Update the list of event data
+      });
+    } catch (e) {
+      print('Error fetching event dates: $e');
+    }
   }
 
   @override

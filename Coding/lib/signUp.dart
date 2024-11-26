@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 
 const List<String> bloodTypes = <String>['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 class signUp extends StatefulWidget {
-  late Future<Database> database;
 
-  signUp({required this.database});
+  const signUp({super.key});
 
   @override
   State<signUp> createState() => _signUpState();
 }
 
 class _signUpState extends State<signUp> {
-  List<User> userList = [];
+  final Stream<QuerySnapshot> _taskStream =
+  FirebaseFirestore.instance.collection('Users').snapshots();
+
+  CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
   late TextEditingController nameController;
   late TextEditingController ageController;
@@ -33,17 +35,17 @@ class _signUpState extends State<signUp> {
     passwordController = TextEditingController();
   }
 
-  Future<void> _addUser(User user) async{
-    final db = await widget.database;
-    await db.insert(
-        'users',
-        user.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace
-    );
-
+  Future<void> _addUser(User user) async {
+    await users.add({
+      'name': user.name,
+      'age': user.age,
+      'email': user.email,
+      'password': user.password,
+      'bloodType': user.bloodType,
+    });
   }
 
-  bool _saveUser() {
+  Future<bool> _saveUser() async {
     final String name = nameController.text;
     final String age = ageController.text;
     final String email = emailController.text;
@@ -56,10 +58,11 @@ class _signUpState extends State<signUp> {
         age: int.parse(age),
         email: email,
         password: password,
-        bloodType: bloodType
+        bloodType: bloodType,
       );
 
-      _addUser(user);
+      // Wait for the user to be added to Firestore
+      await _addUser(user);
 
       setState(() {
         nameController.text = "";
@@ -74,6 +77,8 @@ class _signUpState extends State<signUp> {
       return false;
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -166,8 +171,9 @@ class _signUpState extends State<signUp> {
                     ),
                     SizedBox(height: 10,),
                     ElevatedButton(
-                      onPressed: (){
-                        if(!_saveUser()){
+                      onPressed: () async{
+                        bool success = await _saveUser();
+                        if(!success){
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Please fill in all fields.', style: TextStyle(fontSize: 16),),

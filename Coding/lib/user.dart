@@ -1,5 +1,5 @@
-class User{
-  int? id;
+class User {
+  String? id;
   String name;
   int age;
   String email;
@@ -12,7 +12,7 @@ class User{
     required this.age,
     required this.email,
     required this.password,
-    required this.bloodType
+    required this.bloodType,
   });
 
   User.fromMap(Map<String, dynamic> result)
@@ -29,8 +29,8 @@ class User{
       'name': name,
       'age': age,
       'email': email,
-      'password' : password,
-      'bloodType' : bloodType,
+      'password': password,
+      'bloodType': bloodType,
     };
   }
 

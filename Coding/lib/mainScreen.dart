@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 import 'home.dart';
 import 'events.dart';
@@ -12,11 +12,10 @@ import 'changePassword.dart';
 import 'settings.dart';
 
 class mainScreen extends StatefulWidget {
-  late Future<Database> database;
   late User user;
   int? selectIndex = 0;
 
-  mainScreen({required this.user, this.selectIndex, required this.database});
+  mainScreen({required this.user, this.selectIndex});
 
   @override
   State<mainScreen> createState() => _mainScreenState();
@@ -28,10 +27,10 @@ class _mainScreenState extends State<mainScreen> {
   @override
   void initState() {
     _widgetOptions = [
-      home(user: widget.user, database: widget.database,),
-      events(database: widget.database,),
-      notifications(database: widget.database,),
-      profile(database: widget.database, user: widget.user,),
+      home(user: widget.user,),
+      events(),
+      notifications(),
+      profile(user: widget.user,),
     ];
   }
 

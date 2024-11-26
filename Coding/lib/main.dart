@@ -1,8 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'start.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+          apiKey: "AIzaSyDsAuYR7OwfbuD0nqdIytvjpE8jAmR89Bw",
+          appId: "946819205577",
+          messagingSenderId: "1:946819205577:android:afe0564b5e89083d760018",
+          projectId: "finalproject-5da98"
+      )
+  );
   runApp(const MyApp());
 }
 

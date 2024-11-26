@@ -1,59 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 import 'register.dart';
 
 class notifications extends StatefulWidget {
-  late Future<Database> database;
-  notifications({required this.database});
+  const notifications({super.key});
 
   @override
   State<notifications> createState() => _notificationsState();
 }
 
 class _notificationsState extends State<notifications> {
+  CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
+
   List<DateTime> eventDates = [];
-  List<Event> events = [];
+  List<Map<String, dynamic>> eventData = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchEvents();
-  }
-
-  Future<void> _fetchEvents() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
-
-    setState(() {
-      events = List.generate(
-          maps.length,
-              (i){
-            return Event(
-                date: maps[i]['eventDate'],
-                name: maps[i]['name'],
-                address: maps[i]['address'],
-                startTime: maps[i]['startTime'],
-                endTime: maps[i]['endTime']
-            );
-          }
-      );
-    });
-
     _fetchEventDates();
   }
 
   Future<void> _fetchEventDates() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
+    try {
+      QuerySnapshot querySnapshot = await eventsCollection.get();
+      List<DateTime> fetchedEventDates = [];
+      List<Map<String, dynamic>> fetchedEventData = [];
 
-    setState(() {
-      eventDates = maps.map((event) {
-        return DateTime.parse(event['eventDate']);
-      }).toList();
-    });
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        // Convert event data to Event object and add to fetchedEventData
+        Event event = Event.fromMap(data);
+        fetchedEventData.add(event.toMap());
+
+        // Parse the date field and add it to fetchedEventDates
+        DateTime eventDate = DateTime.parse(event.date);
+        fetchedEventDates.add(eventDate);
+      }
+
+      setState(() {
+        eventDates = fetchedEventDates; // Update the list of event dates
+        eventData = fetchedEventData;   // Update the list of event data
+      });
+    } catch (e) {
+      print('Error fetching event dates: $e');
+    }
   }
 
   @override
@@ -66,15 +61,12 @@ class _notificationsState extends State<notifications> {
           SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
-              itemCount: eventDates.length,
+              itemCount: eventData.length, // Use eventData length
               itemBuilder: (context, index) {
-                if (index >= events.length) {
-                  return SizedBox(); // Return an empty widget if events list is shorter than eventDates
-                }
-
-                final eventDate = eventDates[index];
-                final event = events[index];
-                final monthName = DateFormat('MMMM').format(eventDate);
+                final eventMap = eventData[index]; // Access event data as a map
+                final event = Event.fromMap(eventMap); // Convert map to Event instance
+                final eventDate = DateTime.parse(event.date); // Parse the date
+                final monthName = DateFormat('MMMM').format(eventDate); // Get month name
 
                 return Column(
                   children: [
@@ -92,25 +84,41 @@ class _notificationsState extends State<notifications> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: Row(
                           children: [
-                            SizedBox(width: 10,),
+                            SizedBox(width: 10),
                             Expanded(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Blood Drive taking place at ${event.address} on the ${eventDate.day} of ${monthName}"),
+                                  Text(
+                                    "Blood Drive taking place at ${event.address} on the ${eventDate.day} of ${monthName}",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
                                         onPressed: () {
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => register(event: event)));
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => register(event: event),
+                                            ),
+                                          );
                                         },
-                                        child: Text("Register", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),),
+                                        child: Text(
+                                          "Register",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color(0xFFB44343),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(25),
-                                                side: BorderSide(color: Colors.black, width: 3)
-                                            )
+                                          backgroundColor: Color(0xFFB44343),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25),
+                                            side: BorderSide(color: Colors.black, width: 3),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -118,18 +126,18 @@ class _notificationsState extends State<notifications> {
                                 ],
                               ),
                             ),
-                            SizedBox(width: 10,),
-                            Icon(Icons.image, size: 100,),
+                            SizedBox(width: 10),
+                            Icon(Icons.image, size: 100), // Placeholder for event image
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(height: 15,),
+                    SizedBox(height: 15),
                   ],
                 );
               },
             ),
-          ),
+          )
         ],
       ),
     );

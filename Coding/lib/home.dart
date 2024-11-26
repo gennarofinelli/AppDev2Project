@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 import 'mainScreen.dart';
 
 class home extends StatefulWidget {
-  late Future<Database> database;
   late User user;
 
-  home({required this.user, required this.database});
+  home({required this.user});
 
   @override
   State<home> createState() => _homeState();
@@ -30,7 +29,7 @@ class _homeState extends State<home> {
           SizedBox(height: 10,),
           ElevatedButton(
             onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: widget.user, selectIndex: 1, database: widget.database,)));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: widget.user, selectIndex: 1)));
             },
             child: Text("DONATE NOW", style: TextStyle(color: Colors.black, fontSize: 30),),
             style: ElevatedButton.styleFrom(

@@ -1,102 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 import 'register.dart';
 
 class events extends StatefulWidget {
-  late Future<Database> database;
-  events({required this.database});
+  const events({super.key});
 
   @override
   State<events> createState() => _EventsState();
 }
 
 class _EventsState extends State<events> {
+  CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
+
+  DateTime _selectedDate = DateTime.now();
+  final List<String> daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   List<DateTime> eventDates = [];
-  List<Event> events = [];
+  List<Map<String, dynamic>> eventData = [];
 
   @override
   void initState() {
     super.initState();
-    _addEvents();
     _fetchEventDates();
-    _fetchEvents();
-  }
-
-  Future<void> _addEvents() async {
-    final db = await widget.database;
-
-    if(events.isEmpty){
-      await db.insert(
-        'events',
-        {
-          'name': 'Hero\'s Drive',
-          'address': '11855 Av. Andre Dumas',
-          'eventDate': '2024-11-21',
-          'startTime': '10:00 AM',
-          'endTime': '2:00 PM',
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      await db.insert(
-        'events',
-        {
-          'name': 'Donate & Glow',
-          'address': '11854 Av. Andre Dumas',
-          'eventDate': '2024-12-05',
-          'startTime': '11:00 AM',
-          'endTime': '3:00 PM',
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
   }
 
   Future<void> _fetchEventDates() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
+    try {
+      QuerySnapshot querySnapshot = await eventsCollection.get();
+      List<DateTime> fetchedEventDates = [];
+      List<Map<String, dynamic>> fetchedEventData = [];
 
-    if(events.isEmpty) {
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        // Convert event data to Event object and add to fetchedEventData
+        Event event = Event.fromMap(data);
+        fetchedEventData.add(event.toMap());
+
+        // Parse the date field and add it to fetchedEventDates
+        DateTime eventDate = DateTime.parse(event.date);
+        fetchedEventDates.add(eventDate);
+      }
+
       setState(() {
-        eventDates = maps.map((event) {
-          return DateTime.parse(event['eventDate']);
-        }).toList();
+        eventDates = fetchedEventDates; // Update the list of event dates
+        eventData = fetchedEventData;   // Update the list of event data
       });
+    } catch (e) {
+      print('Error fetching event dates: $e');
     }
   }
 
-  Future<void> _fetchEvents() async {
-    final db = await widget.database;
-    final List<Map<String, dynamic>> maps = await db.query('events');
 
-    if(events.isEmpty) {
-      setState(() {
-        events = List.generate(
-            maps.length,
-                (i) {
-              return Event(
-                  date: maps[i]['eventDate'],
-                  name: maps[i]['name'],
-                  address: maps[i]['address'],
-                  startTime: maps[i]['startTime'],
-                  endTime: maps[i]['endTime']
-              );
-            }
-        );
-      });
-    }
-  }
-
-  DateTime _selectedDate = DateTime.now();
-  final List<String> daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   void _changeMonth(int offset) {
     setState(() {
       _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + offset, 1);
     });
-    _fetchEventDates();
   }
 
   String get monthYear => DateFormat.yMMMM().format(_selectedDate);
@@ -110,7 +72,10 @@ class _EventsState extends State<events> {
 
   bool _isEventDay(int day) {
     final dateToCheck = DateTime(_selectedDate.year, _selectedDate.month, day);
-    return eventDates.any((eventDate) => eventDate == dateToCheck);
+    return eventDates.any((eventDate) =>
+    eventDate.year == dateToCheck.year &&
+        eventDate.month == dateToCheck.month &&
+        eventDate.day == dateToCheck.day);
   }
 
   @override
@@ -187,19 +152,14 @@ class _EventsState extends State<events> {
               ],
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           Text("Upcoming Dates", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: eventDates.length,
+              itemCount: eventData.length,
               itemBuilder: (context, index) {
-                if (index >= events.length) {
-                  return SizedBox(); // Return an empty widget if events list is shorter than eventDates
-                }
-
-                final eventDate = eventDates[index];
-                final event = events[index];
+                final event = eventData[index]; // Get the Event object
 
                 return Column(
                   children: [
@@ -216,11 +176,16 @@ class _EventsState extends State<events> {
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: ListTile(
-                          leading: Text(eventDate.day.toString()),
-                          title: Text(event.name),
+                          leading: Text(event['date']), // Display event date
+                          title: Text(event['name']),  // Display event name
+                          subtitle: Text(event['address']), // Display event address
                           trailing: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => register(event: event)));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => register(event: Event.fromMap(event)), // Pass the Event object
+                                ),
+                              );
                             },
                             child: Text(
                               "Register",
