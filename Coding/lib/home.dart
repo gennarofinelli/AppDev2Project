@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'dart:io';
 import 'user.dart';
 import 'mainScreen.dart';
+import 'event.dart';
 
 class home extends StatefulWidget {
   late User user;
@@ -14,6 +17,45 @@ class home extends StatefulWidget {
 }
 
 class _homeState extends State<home> {
+  CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
+  List<DateTime> eventDates = [];
+  List<Map<String, dynamic>> eventData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchEventDates();
+  }
+
+  Future<void> _fetchEventDates() async {
+    try {
+      QuerySnapshot querySnapshot = await eventsCollection.get();
+      List<DateTime> fetchedEventDates = [];
+      List<Map<String, dynamic>> fetchedEventData = [];
+
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        String id = doc.id; // Firestore document ID
+
+        // Convert event data to Event object
+        Event event = Event.fromMapWithID(data, id);
+        fetchedEventData.add(event.toMap());
+
+        // Parse the date string to DateTime
+        DateTime eventDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(
+            event.date);
+        fetchedEventDates.add(eventDate);
+      }
+
+      setState(() {
+        eventDates = fetchedEventDates; // Update the list of event dates
+        eventData = fetchedEventData; // Update the list of event data
+      });
+    } catch (e) {
+      print('Error fetching event dates: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -55,8 +97,13 @@ class _homeState extends State<home> {
             height: 175,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 6,
+              itemCount: eventData.length,
               itemBuilder: (context, index){
+                final eventMap = eventData[index];
+                final event = Event.fromMap(eventMap);
+                final DateTime eventDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(event.date);
+                final String formattedDate = DateFormat('yyyy-MM-dd').format(eventDate);
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Container(
@@ -68,13 +115,14 @@ class _homeState extends State<home> {
                     child: Column(
                       children: [
                         SizedBox(height: 15,),
-                        Icon(Icons.image, size: 75,),
+                        Expanded(child: Image(image: FileImage(File(event.imagePath)), width: 75,)),
                         Divider(
                           thickness: 2,
                           color: Colors.black,
                         ),
                         SizedBox(height: 5,),
-                        Text("Event Info")
+                        Text("${event.name}"),
+                        Text("${formattedDate}"),
                       ],
                     ),
                   ),

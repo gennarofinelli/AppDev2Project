@@ -33,9 +33,4 @@ class User {
       'bloodType': bloodType,
     };
   }
-
-  @override
-  String toString() {
-    return 'User{id: $id, name: $name, age: $age, email: $email, password: $password, bloodType: $bloodType}';
-  }
 }

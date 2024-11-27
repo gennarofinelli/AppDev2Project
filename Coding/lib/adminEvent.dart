@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'event.dart';
 import 'adminMain.dart';
 
@@ -13,6 +15,8 @@ class adminEvent extends StatefulWidget {
 }
 
 class _adminEventState extends State<adminEvent> {
+  File? cameraFile;
+
   CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
 
   List<DateTime> eventDates = [];
@@ -74,8 +78,21 @@ class _adminEventState extends State<adminEvent> {
     }
   }
 
-  Future<void> _addEvent(String name, String address, String date, String start, String end) async {
+  selectFromCamera() async{
+    ImagePicker _imagePicker = ImagePicker();
+    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.camera);
+    if(pickedFile != null){
+      setState(() {
+        cameraFile = File(pickedFile.path);
+      });
+    } else{
+      print('No image selected');
+    }
+  }
+
+  Future<void> _addEvent(String image, String name, String address, String date, String start, String end) async {
     await eventsCollection.add({
+      'imageFile' : image,
       'name' : name,
       'address' : address,
       'date' : date,
@@ -117,7 +134,7 @@ class _adminEventState extends State<adminEvent> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return SingleChildScrollView(
       child: Column(
         children: [
           SizedBox(height: 10,),
@@ -129,6 +146,35 @@ class _adminEventState extends State<adminEvent> {
               padding: EdgeInsets.all(15),
               child: Column(
                 children: [
+                  Container(
+                    color: Color(0xFFFFECDE),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 15,),
+                        Expanded(
+                          child: SizedBox(
+                            height: 200,
+                            width: 300,
+                            child: cameraFile == null
+                                ? Center(child: Text('You did not select the picture'),)
+                                : Center(child: Image.file(cameraFile!)),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: selectFromCamera,
+                          child: Text("Select An Image", style: TextStyle(color: Colors.black),),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              side: BorderSide(color: Colors.black, width: 3),
+                            ),
+                            backgroundColor: Color(0xFFB44343),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10,),
                   TextField(
                     decoration: InputDecoration(
                       labelText: 'Event Name',
@@ -235,14 +281,14 @@ class _adminEventState extends State<adminEvent> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 175,),
+                  SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
                         onPressed: (){
                           setState(() {
-                            _addEvent(nameController.text, addressController.text, selectedDate.toString(), startTime.toString(), endTime.toString());
+                            _addEvent(cameraFile!.path, nameController.text, addressController.text, selectedDate.toString(), startTime.toString(), endTime.toString());
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0,)));
                           });
                         },

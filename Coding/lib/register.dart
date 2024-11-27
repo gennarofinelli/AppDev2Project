@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project/mainScreen.dart';
 import 'event.dart';
 import 'user.dart';
 
 class register extends StatefulWidget {
   late Event event;
   late User user;
+  late int? index;
 
-  register({required this.event, required this.user});
+  register({required this.event, required this.user, this.index});
 
   @override
   State<register> createState() => _registerState();
@@ -171,7 +173,7 @@ class _registerState extends State<register> {
                 onPressed: (){
                   if(agreed){
                     _addRegistration();
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => mainScreen(user: widget.user, selectIndex: widget.index,)), (Route<dynamic> route)=> false);
                   } else {
                     SnackBar(
                       content: Text('Agree to the terms before registering!', style: TextStyle(fontSize: 16),),

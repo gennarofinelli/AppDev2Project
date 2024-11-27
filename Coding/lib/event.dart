@@ -5,6 +5,7 @@ class Event {
   String date;
   String startTime;
   String endTime;
+  String imagePath;
 
   Event({
     this.id,
@@ -13,6 +14,7 @@ class Event {
     required this.date,
     required this.startTime,
     required this.endTime,
+    required this.imagePath,
   });
 
   factory Event.fromMap(Map<String, dynamic> data) {
@@ -22,6 +24,7 @@ class Event {
       date: data['date'] ?? '',
       startTime: data['startTime'] ?? '',
       endTime: data['endTime'] ?? '',
+      imagePath: data['imageFile'] ?? '',
     );
   }
 
@@ -33,6 +36,7 @@ class Event {
       date: data['date'] ?? '',
       startTime: data['startTime'] ?? '',
       endTime: data['endTime'] ?? '',
+      imagePath: data['imageFile'] ?? '',
     );
   }
 
@@ -43,6 +47,7 @@ class Event {
       'date': date,
       'startTime': startTime,
       'endTime': endTime,
+      'imageFile': imagePath,
     };
   }
 }

@@ -87,7 +87,7 @@ class _signUpState extends State<signUp> {
       appBar: AppBar(
         backgroundColor: Color(0xFFFFFBF3),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Text("BLOOD\nLIFE", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),

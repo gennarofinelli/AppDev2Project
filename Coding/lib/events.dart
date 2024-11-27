@@ -190,7 +190,7 @@ class _EventsState extends State<events> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => register(event: Event.fromMap(event), user: widget.user,), // Pass the Event object
+                                  builder: (context) => register(event: Event.fromMap(event), user: widget.user, index: 1,), // Pass the Event object
                                 ),
                               );
                             },
