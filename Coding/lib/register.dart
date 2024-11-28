@@ -25,11 +25,21 @@ class _registerState extends State<register> {
 
   bool agreed = false;
 
-  Future<void> _addRegistration() async{
-    await registrations.add({
-      'eventName' : widget.event.name,
-      'userName' : widget.user.name,
-    });
+  Future<bool> _addRegistration() async{
+    QuerySnapshot querySnapshot = await registrations
+        .where('userName', isEqualTo: widget.user.name)
+        .where('eventName', isEqualTo: widget.event.name)
+        .get();
+
+    if(querySnapshot.docs.isEmpty){
+      await registrations.add({
+        'eventName' : widget.event.name,
+        'userName' : widget.user.name,
+      });
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -43,7 +53,7 @@ class _registerState extends State<register> {
         centerTitle: true,
         backgroundColor: Color(0xFFB44343),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 10,),
@@ -170,14 +180,32 @@ class _registerState extends State<register> {
             SizedBox(
               width: 200,
               child: ElevatedButton(
-                onPressed: (){
+                onPressed: () async{
                   if(agreed){
-                    _addRegistration();
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => mainScreen(user: widget.user, selectIndex: widget.index,)), (Route<dynamic> route)=> false);
+                    bool result = await _addRegistration();
+                    if(result){
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => mainScreen(user: widget.user, selectIndex: widget.index,)), (Route<dynamic> route)=> false);
+                    } else {
+                      await ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'You\'re already registered for this drive!',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                    }
                   } else {
-                    SnackBar(
-                      content: Text('Agree to the terms before registering!', style: TextStyle(fontSize: 16),),
-                      duration: Duration(seconds: 2), // Duration for Snackbar display
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Agree to the terms before registering!',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        duration: Duration(seconds: 2),
+                      ),
                     );
                   }
                 },

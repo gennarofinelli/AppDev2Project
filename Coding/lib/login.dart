@@ -114,9 +114,14 @@ class _loginState extends State<login> {
                         } else if (_loginAdmin(email, password)){
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0,)));
                         }else {
-                          SnackBar(
-                            content: Text('Incorrect Username or Password!', style: TextStyle(fontSize: 16),),
-                            duration: Duration(seconds: 2), // Duration for Snackbar display
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Incorrect Username or Password!',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              duration: Duration(seconds: 2),
+                            ),
                           );
                         }
                       },

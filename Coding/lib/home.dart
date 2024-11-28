@@ -88,7 +88,7 @@ class _homeState extends State<home> {
           SizedBox(height: 5,),
           Divider(
             thickness: 1,
-            color: Colors.black,
+            color: theme=='Light'?Colors.black:Colors.white,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -135,7 +135,7 @@ class _homeState extends State<home> {
           ),
           Divider(
             thickness: 1,
-            color: Colors.black,
+            color: theme=='Light'?Colors.black:Colors.white,
           ),
           SizedBox(height: 5,),
           Text("Contact Us!", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: theme=='Light'?Colors.black:Colors.white,),),

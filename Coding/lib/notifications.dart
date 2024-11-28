@@ -309,7 +309,7 @@ class _notificationsState extends State<notifications> {
                               ),
                             ),
                             SizedBox(width: 10),
-                            Icon(Icons.star, size: 100), // Placeholder for event image
+                            Icon(Icons.star, size: 100, color: theme=='Light'?Colors.black:Colors.white,), // Placeholder for event image
                           ],
                         ),
                       ),
