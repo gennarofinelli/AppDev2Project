@@ -116,7 +116,7 @@ class _EventsState extends State<events> {
                       .map((day) => Expanded(
                       child: Center(
                           child: Text(day,
-                              style: TextStyle(fontWeight: FontWeight.bold)))))
+                              style: TextStyle(fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white)))))
                       .toList(),
                 ),
                 SizedBox(height: 8),
