@@ -20,6 +20,15 @@ class _profileState extends State<profile> {
 
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
+  late String theme;
+
+
+  @override
+  void initState() {
+    super.initState();
+    theme = widget.user.theme ?? 'Light';
+  }
+
   Future<void> _deleteUser(String email) async {
     try {
       var querySnapshot = await users.where('email', isEqualTo: email).get();
@@ -95,9 +104,9 @@ class _profileState extends State<profile> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Welcome", style: TextStyle(fontSize: 18),),
-                  Text("${widget.user.name}", style: TextStyle(fontSize: 24),),
-                  Text("Blood Type: ${widget.user.bloodType}", style: TextStyle(fontSize: 16),),
+                  Text("Welcome", style: TextStyle(fontSize: 18, color: theme=='Light'?Colors.black:Colors.white),),
+                  Text("${widget.user.name}", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
+                  Text("Blood Type: ${widget.user.bloodType}", style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white)),
                 ],
               )
             ],
@@ -105,18 +114,18 @@ class _profileState extends State<profile> {
           SizedBox(height: 50,),
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               border: Border(
                 top: BorderSide(color: Colors.black, width: 2),
                 bottom: BorderSide(color: Colors.black, width: 2),
               ),
             ),
             child: Card(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: ListTile(
-                title: Text("Password: "),
+                title: Text("Password: ", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
                 trailing: ElevatedButton(
                   onPressed: (){
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => changePassword(user: widget.user),));
@@ -136,18 +145,18 @@ class _profileState extends State<profile> {
           SizedBox(height: 25,),
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               border: Border(
                 top: BorderSide(color: Colors.black, width: 2),
                 bottom: BorderSide(color: Colors.black, width: 2),
               ),
             ),
             child: Card(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: ListTile(
-                title: Text("Logout: "),
+                title: Text("Logout: ", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
                 trailing: ElevatedButton(
                   onPressed: (){
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
@@ -167,14 +176,14 @@ class _profileState extends State<profile> {
           SizedBox(height: 125,),
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               border: Border(
                 top: BorderSide(color: Colors.black, width: 2),
                 bottom: BorderSide(color: Colors.black, width: 2),
               ),
             ),
             child: Card(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: ListTile(

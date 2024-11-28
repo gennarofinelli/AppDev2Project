@@ -23,9 +23,12 @@ class _EventsState extends State<events> {
   List<DateTime> eventDates = [];
   List<Map<String, dynamic>> eventData = [];
 
+  late String theme;
+
   @override
   void initState() {
     super.initState();
+    theme = widget.user.theme ?? 'Light';
     _fetchEventDates();
   }
 
@@ -92,19 +95,19 @@ class _EventsState extends State<events> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                icon: Icon(Icons.arrow_left, color: Colors.black, size: 30),
+                icon: Icon(Icons.arrow_left, color: theme=='Light'?Colors.black:Colors.white, size: 30),
                 onPressed: () => _changeMonth(-1),
               ),
-              Text(monthYear, style: TextStyle(fontSize: 24)),
+              Text(monthYear, style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white,)),
               IconButton(
-                icon: Icon(Icons.arrow_right, color: Colors.black, size: 30),
+                icon: Icon(Icons.arrow_right, color: theme=='Light'?Colors.black:Colors.white, size: 30),
                 onPressed: () => _changeMonth(1),
               ),
             ],
           ),
           SizedBox(height: 10),
           Container(
-            color: Color(0xFFFFECDE),
+            color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
             child: Column(
               children: [
                 Row(
@@ -146,7 +149,7 @@ class _EventsState extends State<events> {
                         child: Text(
                           '$day',
                           style: TextStyle(
-                            color: isEventDay ? Colors.white : Colors.black,
+                            color: isEventDay ? Colors.white : theme=='Light' ? Colors.black : Colors.white,
                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
@@ -158,7 +161,7 @@ class _EventsState extends State<events> {
             ),
           ),
           SizedBox(height: 10),
-          Text("Upcoming Dates", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text("Upcoming Dates", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
@@ -172,20 +175,20 @@ class _EventsState extends State<events> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         border: Border(
-                          top: BorderSide(color: Colors.black, width: 2),
-                          bottom: BorderSide(color: Colors.black, width: 2),
+                          top: BorderSide(color: theme=='Light'?Colors.black:Colors.white, width: 2),
+                          bottom: BorderSide(color: theme=='Light'?Colors.black:Colors.white, width: 2),
                         ),
                       ),
                       child: Card(
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: ListTile(
-                          leading: Text(formattedDate), // Display event date
-                          title: Text(event['name']),  // Display event name
-                          subtitle: Text(event['address']), // Display event address
+                          leading: Text(formattedDate, style: TextStyle(color: theme=='Light'?Colors.black:Colors.white)), // Display event date
+                          title: Text(event['name'], style: TextStyle(color: theme=='Light'?Colors.black:Colors.white)),  // Display event name
+                          subtitle: Text(event['address'], style: TextStyle(color: theme=='Light'?Colors.black:Colors.white)), // Display event address
                           trailing: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).push(
@@ -196,7 +199,7 @@ class _EventsState extends State<events> {
                             },
                             child: Text(
                               "Register",
-                              style: TextStyle(color: Colors.black, fontSize: 16),
+                              style: TextStyle(color: theme=='Light'?Colors.black:Colors.white, fontSize: 16),
                             ),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(

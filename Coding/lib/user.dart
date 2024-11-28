@@ -6,6 +6,7 @@ class User {
   String password;
   String bloodType;
   String? profile;
+  String? theme;
 
   User({
     this.id,
@@ -15,6 +16,7 @@ class User {
     required this.password,
     required this.bloodType,
     this.profile,
+    this.theme,
   });
 
   User.fromMap(Map<String, dynamic> result)
@@ -24,7 +26,8 @@ class User {
         email = result['email'],
         password = result['password'],
         bloodType = result['bloodType'],
-        profile = result['profilePicture'];
+        profile = result['profilePicture'],
+        theme = result['theme'];
 
   Map<String, Object?> toMap() {
     return {
@@ -35,6 +38,7 @@ class User {
       'password': password,
       'bloodType': bloodType,
       'profilePicture': profile,
+      'theme': theme,
     };
   }
 }

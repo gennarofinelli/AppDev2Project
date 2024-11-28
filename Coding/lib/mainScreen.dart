@@ -25,6 +25,7 @@ class mainScreen extends StatefulWidget {
 
 class _mainScreenState extends State<mainScreen> {
   late List<Widget> _widgetOptions;
+  late String theme;
 
   File? cameraFile;
 
@@ -32,6 +33,8 @@ class _mainScreenState extends State<mainScreen> {
 
   @override
   void initState() {
+    super.initState();
+    theme = widget.user.theme ?? 'Light';
     _widgetOptions = [
       home(user: widget.user,),
       events(user: widget.user),
@@ -79,7 +82,9 @@ class _mainScreenState extends State<mainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFFBF3),
+      backgroundColor: theme == 'Light'
+          ? Color(0xFFFFFBF3)
+          : Color(0xFF373737),
       appBar: AppBar(
         title: Text("BloodLife", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
         centerTitle: true,
@@ -116,6 +121,7 @@ class _mainScreenState extends State<mainScreen> {
         elevation: 5,
       ),
       drawer: Drawer(
+        backgroundColor: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
         child: ListView(
           //important: remove any padding from the ListView
           padding: EdgeInsets.zero,
@@ -149,20 +155,20 @@ class _mainScreenState extends State<mainScreen> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
+              leading: Icon(Icons.settings, color: theme=='Light'?Colors.black:Colors.white),
+              title: Text("Settings", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
               onTap: (){
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> settings()));
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> settings(user: widget.user,)));
               },
-              trailing: Icon(Icons.arrow_right),
+              trailing: Icon(Icons.arrow_right, color: theme=='Light'?Colors.black:Colors.white),
             ),
             ListTile(
-              leading: Icon(Icons.lock),
-              title: Text("Logout"),
+              leading: Icon(Icons.lock, color: theme=='Light'?Colors.black:Colors.white),
+              title: Text("Logout", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
               onTap: (){
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
               },
-              trailing: Icon(Icons.arrow_right),
+              trailing: Icon(Icons.arrow_right, color: theme=='Light'?Colors.black:Colors.white),
             ),
           ],
         ),

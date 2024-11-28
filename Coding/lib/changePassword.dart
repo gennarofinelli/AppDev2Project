@@ -20,9 +20,12 @@ class _changePasswordState extends State<changePassword> {
 
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
+  late String theme;
+
   @override
   void initState() {
     super.initState();
+    theme = widget.user.theme ?? 'Light';
     _fetchCurrentPassword(); // Fetch the current password on screen initialization
   }
 
@@ -62,7 +65,9 @@ class _changePasswordState extends State<changePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFFBF3),
+      backgroundColor: theme == 'Light'
+          ? Color(0xFFFFFBF3)
+          : Color(0xFF373737),
       appBar: AppBar(
         title: Text("BloodLife", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
         centerTitle: true,
@@ -77,11 +82,12 @@ class _changePasswordState extends State<changePassword> {
             TextField(
               decoration: InputDecoration(
                 labelText: 'New Password',
+                labelStyle: TextStyle(color: theme=='Light'?Colors.black:Colors.white),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFB44343)),
                 ),
                 filled: true,
-                fillColor: Color(0xFFFFECDE),
+                fillColor: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               ),
               obscureText: true,
               controller: newPasswordController,
@@ -90,11 +96,12 @@ class _changePasswordState extends State<changePassword> {
             TextField(
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
+                labelStyle: TextStyle(color: theme=='Light'?Colors.black:Colors.white),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFB44343)),
                 ),
                 filled: true,
-                fillColor: Color(0xFFFFECDE),
+                fillColor: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               ),
               obscureText: true,
               controller: confirmPasswordController,

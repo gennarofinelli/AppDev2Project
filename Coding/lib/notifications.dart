@@ -26,9 +26,12 @@ class _notificationsState extends State<notifications> {
   List<Map<String, dynamic>> eventData = [];
   List<Map<String, dynamic>> registeredData = [];
 
+  late String theme;
+
   @override
   void initState() {
     super.initState();
+    theme = widget.user.theme ?? 'Light';
     _fetchEventDates();
     _fetchRegistrationsForUser(widget.user.name);
   }
@@ -119,11 +122,11 @@ class _notificationsState extends State<notifications> {
       child: Column(
         children: [
           SizedBox(height: 10,),
-          Text("Notifications", style: TextStyle(fontSize: 24)),
+          Text("Notifications", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10,),
-          Divider(height: 1, thickness: 2, color: Colors.black,),
+          Divider(height: 1, thickness: 2, color: theme=='Light'?Colors.black:Colors.white),
           SizedBox(height: 10,),
-          Text("Upcoming Drives", style: TextStyle(fontSize: 24)),
+          Text("Upcoming Drives", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
@@ -138,14 +141,14 @@ class _notificationsState extends State<notifications> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         border: Border(
-                          top: BorderSide(color: Colors.black, width: 2),
-                          bottom: BorderSide(color: Colors.black, width: 2),
+                          top: BorderSide(color: theme=='Light'?Colors.black:Colors.white, width: 2),
+                          bottom: BorderSide(color: theme=='Light'?Colors.black:Colors.white, width: 2),
                         ),
                       ),
                       child: Card(
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: Row(
@@ -157,7 +160,7 @@ class _notificationsState extends State<notifications> {
                                 children: [
                                   Text(
                                     "Blood Drive taking place at ${event.address} on the ${eventDate.day} of ${monthName}",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white),
                                   ),
                                   SizedBox(height: 10),
                                   Row(
@@ -193,7 +196,7 @@ class _notificationsState extends State<notifications> {
                               ),
                             ),
                             SizedBox(width: 10),
-                            Image(image: FileImage(File(event.imagePath)), height: 150),
+                            Image(image: FileImage(File(event.imagePath)), width: 100),
                           ],
                         ),
                       ),
@@ -205,7 +208,7 @@ class _notificationsState extends State<notifications> {
             ),
           ),
           SizedBox(height: 10,),
-          Text("Registered Drives", style: TextStyle(fontSize: 24)),
+          Text("Registered Drives", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
@@ -218,14 +221,14 @@ class _notificationsState extends State<notifications> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         border: Border(
-                          top: BorderSide(color: Colors.black, width: 2),
-                          bottom: BorderSide(color: Colors.black, width: 2),
+                          top: BorderSide(color: theme=='Light'?Colors.black:Colors.white, width: 2),
+                          bottom: BorderSide(color: theme=='Light'?Colors.black:Colors.white, width: 2),
                         ),
                       ),
                       child: Card(
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: Row(
@@ -237,7 +240,7 @@ class _notificationsState extends State<notifications> {
                                 children: [
                                   Text(
                                     "You're registered for ${registration.eventName}!",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white),
                                   ),
                                   SizedBox(height: 10),
                                   Row(
