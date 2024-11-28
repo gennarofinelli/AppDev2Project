@@ -42,6 +42,7 @@ class _signUpState extends State<signUp> {
       'email': user.email,
       'password': user.password,
       'bloodType': user.bloodType,
+      'profilePicture': '',
     });
   }
 

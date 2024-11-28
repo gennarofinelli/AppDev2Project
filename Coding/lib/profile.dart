@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'changePassword.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'user.dart';
 import 'start.dart';
 
@@ -14,6 +16,8 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
+  File? cameraFile;
+
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
   Future<void> _deleteUser(String email) async {
@@ -31,6 +35,36 @@ class _profileState extends State<profile> {
     }
   }
 
+  selectFromCamera() async{
+    ImagePicker _imagePicker = ImagePicker();
+    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    if(pickedFile != null){
+      setState(() {
+        cameraFile = File(pickedFile.path);
+      });
+      
+      await _updateUserProfile(pickedFile.path);
+    } else{
+      print('No image selected');
+    }
+  }
+
+  Future<void> _updateUserProfile(String profile) async {
+    QuerySnapshot userSnapshot = await users
+        .where('email', isEqualTo: widget.user.email)
+        .get();
+
+    DocumentSnapshot user = userSnapshot.docs.first;
+    String id = user.id;
+
+    await users.doc(id).update({
+      'profilePicture' : cameraFile!.path
+    });
+    setState(() {
+      widget.user.profile = profile;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -40,10 +74,22 @@ class _profileState extends State<profile> {
           Row(
             children: [
               SizedBox(width: 25,),
-              CircleAvatar(
-                backgroundColor: Color(0xFFFCD5D5),
-                backgroundImage: AssetImage("assets/profile.png"),
-                radius: 60,
+              ElevatedButton(
+                onPressed: selectFromCamera,
+                child: Expanded(
+                  child: CircleAvatar(
+                    backgroundColor: Color(0xFFFCD5D5),
+                    backgroundImage: widget.user.profile == null
+                        ? AssetImage("assets/profile.png")
+                        : FileImage(File(widget.user.profile!)),
+                    radius: 60,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(0),
+                  backgroundColor: Colors.transparent,
+                )
               ),
               SizedBox(width: 10,),
               Column(
