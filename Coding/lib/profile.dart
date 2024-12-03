@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'changePassword.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +8,7 @@ import 'start.dart';
 
 class profile extends StatefulWidget {
   late User user;
-  profile({required this.user});
+  profile({super.key, required this.user});
 
   @override
   State<profile> createState() => _profileState();
@@ -45,8 +44,8 @@ class _profileState extends State<profile> {
   }
 
   selectFromCamera() async{
-    ImagePicker _imagePicker = ImagePicker();
-    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if(pickedFile != null){
       setState(() {
         cameraFile = File(pickedFile.path);
@@ -85,6 +84,11 @@ class _profileState extends State<profile> {
               SizedBox(width: 25,),
               ElevatedButton(
                 onPressed: selectFromCamera,
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(0),
+                  backgroundColor: Colors.transparent,
+                ),
                 child: Expanded(
                   child: CircleAvatar(
                     backgroundColor: Color(0xFFFCD5D5),
@@ -93,11 +97,6 @@ class _profileState extends State<profile> {
                         : FileImage(File(widget.user.profile!)),
                     radius: 60,
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(0),
-                  backgroundColor: Colors.transparent,
                 )
               ),
               SizedBox(width: 10,),
@@ -105,7 +104,7 @@ class _profileState extends State<profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Welcome", style: TextStyle(fontSize: 18, color: theme=='Light'?Colors.black:Colors.white),),
-                  Text("${widget.user.name}", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
+                  Text(widget.user.name, style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
                   Text("Blood Type: ${widget.user.bloodType}", style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white)),
                 ],
               )
@@ -130,7 +129,6 @@ class _profileState extends State<profile> {
                   onPressed: (){
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => changePassword(user: widget.user),));
                   },
-                  child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -138,6 +136,7 @@ class _profileState extends State<profile> {
                     ),
                     backgroundColor: Color(0xFFB44343),
                   ),
+                  child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 16),),
                 ),
               ),
             ),
@@ -161,7 +160,6 @@ class _profileState extends State<profile> {
                   onPressed: (){
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                   },
-                  child: Text("Logout", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -169,6 +167,7 @@ class _profileState extends State<profile> {
                     ),
                     backgroundColor: Color(0xFFB44343),
                   ),
+                  child: Text("Logout", style: TextStyle(color: Colors.black, fontSize: 16),),
                 ),
               ),
             ),
@@ -201,7 +200,6 @@ class _profileState extends State<profile> {
                                 _deleteUser(widget.user.email);
                                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                               },
-                              child: Text("Yes", style: TextStyle(color: Colors.black),),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
@@ -209,12 +207,12 @@ class _profileState extends State<profile> {
                                 ),
                                 backgroundColor: Color(0xFFB44343),
                               ),
+                              child: Text("Yes", style: TextStyle(color: Colors.black),),
                             ),
                             ElevatedButton(
                               onPressed: (){
                                 Navigator.pop(context);
                               },
-                              child: Text("No", style: TextStyle(color: Colors.black),),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
@@ -222,13 +220,13 @@ class _profileState extends State<profile> {
                                 ),
                                 backgroundColor: Color(0xFFB44343),
                               ),
+                              child: Text("No", style: TextStyle(color: Colors.black),),
                             ),
                           ],
                         );
                       },
                     );
                   },
-                  child: Text("Delete Account", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -236,6 +234,7 @@ class _profileState extends State<profile> {
                     ),
                     backgroundColor: Color(0xFFB44343),
                   ),
+                  child: Text("Delete Account", style: TextStyle(color: Colors.black, fontSize: 16),),
                 ),
               ),
             ),

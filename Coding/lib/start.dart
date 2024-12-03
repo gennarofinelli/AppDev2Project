@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 import 'signUp.dart';
 
@@ -34,7 +32,6 @@ class _startState extends State<start> {
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>login()));
                 },
-                child: Text("LOGIN", style: TextStyle(color: Colors.black, fontSize: 25),),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFB44343),
                     shape: RoundedRectangleBorder(
@@ -42,6 +39,7 @@ class _startState extends State<start> {
                         side: BorderSide(color: Colors.black, width: 3)
                     )
                 ),
+                child: Text("LOGIN", style: TextStyle(color: Colors.black, fontSize: 25),),
               ),
             ),
             SizedBox(height: 10,),
@@ -52,7 +50,6 @@ class _startState extends State<start> {
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>signUp()));
                 },
-                child: Text("SIGN UP", style: TextStyle(color: Colors.black, fontSize: 25),),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFB44343),
                     shape: RoundedRectangleBorder(
@@ -60,6 +57,7 @@ class _startState extends State<start> {
                         side: BorderSide(color: Colors.black, width: 3)
                     )
                 ),
+                child: Text("SIGN UP", style: TextStyle(color: Colors.black, fontSize: 25),),
               ),
             ),
             SizedBox(height: 228,),

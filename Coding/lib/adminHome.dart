@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 
@@ -132,8 +131,6 @@ class _adminHomeState extends State<adminHome> {
                                           _deleteEvent(event['name']);
                                           Navigator.pop(context);
                                         },
-                                        child: Text("Yes", style: TextStyle(
-                                            color: Colors.black)),
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -143,13 +140,13 @@ class _adminHomeState extends State<adminHome> {
                                           ),
                                           backgroundColor: Color(0xFFB44343),
                                         ),
+                                        child: Text("Yes", style: TextStyle(
+                                            color: Colors.black)),
                                       ),
                                       ElevatedButton(
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: Text("No", style: TextStyle(
-                                            color: Colors.black)),
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -159,13 +156,14 @@ class _adminHomeState extends State<adminHome> {
                                           ),
                                           backgroundColor: Color(0xFFB44343),
                                         ),
+                                        child: Text("No", style: TextStyle(
+                                            color: Colors.black)),
                                       ),
                                     ],
                                   );
                                 },
                               );
                             },
-                            child: Icon(Icons.delete, color: Colors.black),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
@@ -173,6 +171,7 @@ class _adminHomeState extends State<adminHome> {
                               ),
                               backgroundColor: Color(0xFFB44343),
                             ),
+                            child: Icon(Icons.delete, color: Colors.black),
                           ),
                         ),
                       ),

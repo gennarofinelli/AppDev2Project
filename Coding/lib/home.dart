@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
@@ -10,7 +9,7 @@ import 'event.dart';
 class home extends StatefulWidget {
   late User user;
 
-  home({required this.user});
+  home({super.key, required this.user});
 
   @override
   State<home> createState() => _homeState();
@@ -76,7 +75,6 @@ class _homeState extends State<home> {
             onPressed: (){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: widget.user, selectIndex: 1)));
             },
-            child: Text("DONATE NOW", style: TextStyle(color: Colors.black, fontSize: 30),),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFFE44949),
               shape: RoundedRectangleBorder(
@@ -84,6 +82,7 @@ class _homeState extends State<home> {
                   side: BorderSide(color: Colors.black, width: 3)
               )
             ),
+            child: Text("DONATE NOW", style: TextStyle(color: Colors.black, fontSize: 30),),
           ),
           SizedBox(height: 5,),
           Divider(
@@ -96,7 +95,7 @@ class _homeState extends State<home> {
               Text("News & Updates:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white,),)
             ],
           ),
-          Container(
+          SizedBox(
             height: 175,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -124,8 +123,8 @@ class _homeState extends State<home> {
                           color: theme=='Light'?Colors.black:Colors.white,
                         ),
                         SizedBox(height: 5,),
-                        Text("${event.name}", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
-                        Text("${formattedDate}", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
+                        Text(event.name, style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
+                        Text(formattedDate, style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
                       ],
                     ),
                   ),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
-import 'start.dart';
 
 class changePassword extends StatefulWidget {
   late User user;
-  changePassword({required this.user});
+  changePassword({super.key, required this.user});
 
   @override
   State<changePassword> createState() => _changePasswordState();
@@ -166,7 +164,6 @@ class _changePasswordState extends State<changePassword> {
                 }
 
               },
-              child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 25),),
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFB44343),
                   shape: RoundedRectangleBorder(
@@ -174,6 +171,7 @@ class _changePasswordState extends State<changePassword> {
                       side: BorderSide(color: Colors.black, width: 3)
                   )
               ),
+              child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 25),),
             ),
           ],
         ),

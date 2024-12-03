@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project/mainScreen.dart';
 import 'user.dart';
@@ -10,7 +9,7 @@ const List<String> appearance = <String>['Light', 'Dark'];
 
 class settings extends StatefulWidget {
   late User user;
-  settings({required this.user});
+  settings({super.key, required this.user});
 
   @override
   State<settings> createState() => _settingsState();

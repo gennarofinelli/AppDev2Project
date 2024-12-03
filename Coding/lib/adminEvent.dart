@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
@@ -79,8 +78,8 @@ class _adminEventState extends State<adminEvent> {
   }
 
   selectFromCamera() async{
-    ImagePicker _imagePicker = ImagePicker();
-    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if(pickedFile != null){
       setState(() {
         cameraFile = File(pickedFile.path);
@@ -162,7 +161,6 @@ class _adminEventState extends State<adminEvent> {
                         ),
                         ElevatedButton(
                           onPressed: selectFromCamera,
-                          child: Text("Select An Image", style: TextStyle(color: Colors.black),),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100),
@@ -170,6 +168,7 @@ class _adminEventState extends State<adminEvent> {
                             ),
                             backgroundColor: Color(0xFFB44343),
                           ),
+                          child: Text("Select An Image", style: TextStyle(color: Colors.black),),
                         ),
                       ],
                     ),
@@ -213,7 +212,6 @@ class _adminEventState extends State<adminEvent> {
                         ),
                         TextButton(
                           onPressed: () => _pickDate(context),
-                          child: const Text('Pick a Date', style: TextStyle(color: Colors.black),),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100),
@@ -221,6 +219,7 @@ class _adminEventState extends State<adminEvent> {
                             ),
                             backgroundColor: Color(0xFFB44343),
                           ),
+                          child: const Text('Pick a Date', style: TextStyle(color: Colors.black),),
                         ),
                       ],
                     ),
@@ -292,7 +291,6 @@ class _adminEventState extends State<adminEvent> {
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0,)));
                           });
                         },
-                        child: Text("Add Event", style: TextStyle(color: Colors.black, fontSize: 18),),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(100),
@@ -300,6 +298,7 @@ class _adminEventState extends State<adminEvent> {
                           ),
                           backgroundColor: Color(0xFFB44343),
                         ),
+                        child: Text("Add Event", style: TextStyle(color: Colors.black, fontSize: 18),),
                       )
                     ],
                   )

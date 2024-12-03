@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project/mainScreen.dart';
 import 'event.dart';
@@ -11,7 +10,7 @@ class register extends StatefulWidget {
   late User user;
   late int? index;
 
-  register({required this.event, required this.user, this.index});
+  register({super.key, required this.event, required this.user, this.index});
 
   @override
   State<register> createState() => _registerState();
@@ -79,7 +78,7 @@ class _registerState extends State<register> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("Date: ${formattedDate}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      Text("Date: $formattedDate", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     ],
                   ),
                   Row(
@@ -157,7 +156,7 @@ class _registerState extends State<register> {
                           children: [
                             Text("I Agree", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
                             Checkbox(
-                              fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                              fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
                                 return Color(0xFFB44343);
                               }),
                               value: agreed,
@@ -186,7 +185,7 @@ class _registerState extends State<register> {
                     if(result){
                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => mainScreen(user: widget.user, selectIndex: widget.index,)), (Route<dynamic> route)=> false);
                     } else {
-                      await ScaffoldMessenger.of(context).showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
                             'You\'re already registered for this drive!',
@@ -209,7 +208,6 @@ class _registerState extends State<register> {
                     );
                   }
                 },
-                child: Text("Register", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFB44343),
                     shape: RoundedRectangleBorder(
@@ -217,6 +215,7 @@ class _registerState extends State<register> {
                         side: BorderSide(color: Colors.black, width: 3)
                     )
                 ),
+                child: Text("Register", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),),
               ),
             ),
             SizedBox(height: 8,),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home.dart';
 import 'user.dart';
 import 'mainScreen.dart';
 import 'adminMain.dart';
@@ -125,7 +123,6 @@ class _loginState extends State<login> {
                           );
                         }
                       },
-                      child: Text("Log In", style: TextStyle(color: Colors.black, fontSize: 25),),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFB44343),
                           shape: RoundedRectangleBorder(
@@ -133,6 +130,7 @@ class _loginState extends State<login> {
                               side: BorderSide(color: Colors.black, width: 3)
                           )
                       ),
+                      child: Text("Log In", style: TextStyle(color: Colors.black, fontSize: 25),),
                     ),
                   ],
                 ),

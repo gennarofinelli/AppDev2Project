@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -8,16 +7,14 @@ import 'home.dart';
 import 'events.dart';
 import 'notifications.dart';
 import 'profile.dart';
-import 'register.dart';
 import 'start.dart';
-import 'changePassword.dart';
 import 'settings.dart';
 
 class mainScreen extends StatefulWidget {
   late User user;
   int? selectIndex = 0;
 
-  mainScreen({required this.user, this.selectIndex});
+  mainScreen({super.key, required this.user, this.selectIndex});
 
   @override
   State<mainScreen> createState() => _mainScreenState();
@@ -38,7 +35,7 @@ class _mainScreenState extends State<mainScreen> {
     _widgetOptions = [
       home(user: widget.user,),
       events(user: widget.user),
-      notifications(user: widget.user,),
+      Notifications(user: widget.user,),
       profile(user: widget.user,),
     ];
   }
@@ -50,8 +47,8 @@ class _mainScreenState extends State<mainScreen> {
   }
 
   selectFromCamera() async{
-    ImagePicker _imagePicker = ImagePicker();
-    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if(pickedFile != null){
       setState(() {
         cameraFile = File(pickedFile.path);
@@ -134,6 +131,11 @@ class _mainScreenState extends State<mainScreen> {
                     SizedBox(height: 50,),
                     ElevatedButton(
                         onPressed: selectFromCamera,
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(0),
+                          backgroundColor: Colors.transparent,
+                        ),
                         child: Expanded(
                           child: CircleAvatar(
                             backgroundColor: Color(0xFFFCD5D5),
@@ -142,11 +144,6 @@ class _mainScreenState extends State<mainScreen> {
                                 : FileImage(File(widget.user.profile!)),
                             radius: 100,
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(0),
-                          backgroundColor: Colors.transparent,
                         )
                     ),
                     Text(widget.user.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),)

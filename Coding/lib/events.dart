@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event.dart';
 import 'register.dart';
@@ -9,7 +8,7 @@ import 'user.dart';
 class events extends StatefulWidget {
   late User user;
 
-  events({required this.user});
+  events({super.key, required this.user});
 
   @override
   State<events> createState() => _EventsState();
@@ -197,16 +196,16 @@ class _EventsState extends State<events> {
                                 ),
                               );
                             },
-                            child: Text(
-                              "Register",
-                              style: TextStyle(color: theme=='Light'?Colors.black:Colors.white, fontSize: 16),
-                            ),
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),
                                 side: BorderSide(color: Colors.black, width: 3),
                               ),
                               backgroundColor: Color(0xFFB44343),
+                            ),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(color: theme=='Light'?Colors.black:Colors.white, fontSize: 16),
                             ),
                           ),
                         ),

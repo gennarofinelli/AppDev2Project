@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'user.dart';
 import 'adminHome.dart';
 import 'adminEvent.dart';
 
 class adminMain extends StatefulWidget {
   int? selectIndex = 0;
 
-  adminMain({this.selectIndex});
+  adminMain({super.key, this.selectIndex});
 
   @override
   State<adminMain> createState() => _adminMainState();

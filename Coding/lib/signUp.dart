@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 
@@ -186,7 +185,6 @@ class _signUpState extends State<signUp> {
                           Navigator.pop(context);
                         }
                       },
-                      child: Text("Sign Up", style: TextStyle(color: Colors.black, fontSize: 25),),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFB44343),
                           shape: RoundedRectangleBorder(
@@ -194,6 +192,7 @@ class _signUpState extends State<signUp> {
                               side: BorderSide(color: Colors.black, width: 3)
                           )
                       ),
+                      child: Text("Sign Up", style: TextStyle(color: Colors.black, fontSize: 25),),
                     ),
                   ],
                 ),

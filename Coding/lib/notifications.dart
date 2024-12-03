@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 
@@ -9,16 +8,16 @@ import 'register.dart';
 import 'user.dart';
 import 'registration.dart';
 
-class notifications extends StatefulWidget {
+class Notifications extends StatefulWidget {
   late User user;
 
-  notifications({required this.user});
+  Notifications({super.key, required this.user});
 
   @override
-  State<notifications> createState() => _notificationsState();
+  State<Notifications> createState() => _NotificationsState();
 }
 
-class _notificationsState extends State<notifications> {
+class _NotificationsState extends State<Notifications> {
   CollectionReference eventsCollection = FirebaseFirestore.instance.collection('Events');
   CollectionReference registrations = FirebaseFirestore.instance.collection('Registrations');
 
@@ -159,7 +158,7 @@ class _notificationsState extends State<notifications> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Blood Drive taking place at ${event.address} on the ${eventDate.day} of ${monthName}",
+                                    "Blood Drive taking place at ${event.address} on the ${eventDate.day} of $monthName",
                                     style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white),
                                   ),
                                   SizedBox(height: 10),
@@ -174,19 +173,19 @@ class _notificationsState extends State<notifications> {
                                             ),
                                           );
                                         },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFFB44343),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25),
+                                            side: BorderSide(color: Colors.black, width: 3),
+                                          ),
+                                        ),
                                         child: Text(
                                           "Register",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
-                                          ),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color(0xFFB44343),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(25),
-                                            side: BorderSide(color: Colors.black, width: 3),
                                           ),
                                         ),
                                       ),
@@ -260,7 +259,6 @@ class _notificationsState extends State<notifications> {
                                                       _deleteRegistration(widget.user.name);
                                                       Navigator.of(context).pop();
                                                     },
-                                                    child: Text("Yes", style: TextStyle(color: Colors.black),),
                                                     style: ElevatedButton.styleFrom(
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(25),
@@ -268,12 +266,12 @@ class _notificationsState extends State<notifications> {
                                                       ),
                                                       backgroundColor: Color(0xFFB44343),
                                                     ),
+                                                    child: Text("Yes", style: TextStyle(color: Colors.black),),
                                                   ),
                                                   ElevatedButton(
                                                     onPressed: (){
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text("No", style: TextStyle(color: Colors.black),),
                                                     style: ElevatedButton.styleFrom(
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(25),
@@ -281,25 +279,26 @@ class _notificationsState extends State<notifications> {
                                                       ),
                                                       backgroundColor: Color(0xFFB44343),
                                                     ),
+                                                    child: Text("No", style: TextStyle(color: Colors.black),),
                                                   ),
                                                 ],
                                               );
                                             },
                                           );
                                         },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFFB44343),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25),
+                                            side: BorderSide(color: Colors.black, width: 3),
+                                          ),
+                                        ),
                                         child: Text(
                                           "Cancel Registration",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
-                                          ),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color(0xFFB44343),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(25),
-                                            side: BorderSide(color: Colors.black, width: 3),
                                           ),
                                         ),
                                       ),
