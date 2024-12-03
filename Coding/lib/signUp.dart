@@ -44,6 +44,7 @@ class _signUpState extends State<signUp> {
       'bloodType': user.bloodType,
       'profilePicture': '',
       'theme': '',
+      'lang': '',
     });
   }
 

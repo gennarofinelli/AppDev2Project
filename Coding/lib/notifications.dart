@@ -27,11 +27,13 @@ class _notificationsState extends State<notifications> {
   List<Map<String, dynamic>> registeredData = [];
 
   late String theme;
+  late String lang;
 
   @override
   void initState() {
     super.initState();
     theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
     _fetchEventDates();
     _fetchRegistrationsForUser(widget.user.name);
   }
@@ -122,11 +124,19 @@ class _notificationsState extends State<notifications> {
       child: Column(
         children: [
           SizedBox(height: 10,),
-          Text("Notifications", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
+          Text(
+              lang=='English'?
+              "Notifications":
+              "Notifications",
+              style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10,),
           Divider(height: 1, thickness: 2, color: theme=='Light'?Colors.black:Colors.white),
           SizedBox(height: 10,),
-          Text("Upcoming Drives", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
+          Text(
+              lang=='English'?
+              "Upcoming Dates":
+              "Dates à venir",
+              style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
@@ -159,7 +169,9 @@ class _notificationsState extends State<notifications> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Blood Drive taking place at ${event.address} on the ${eventDate.day} of ${monthName}",
+                                    lang=='English'?
+                                    "Blood Drive taking place at ${event.address} on the ${eventDate.day} of ${monthName}":
+                                    "Collecte de sang ayant lieu à ${event.address} le ${eventDate.day} de ${monthName}",
                                     style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white),
                                   ),
                                   SizedBox(height: 10),
@@ -175,7 +187,9 @@ class _notificationsState extends State<notifications> {
                                           );
                                         },
                                         child: Text(
-                                          "Register",
+                                          lang=='English'?
+                                          "Register":
+                                          "Registre",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -208,7 +222,11 @@ class _notificationsState extends State<notifications> {
             ),
           ),
           SizedBox(height: 10,),
-          Text("Registered Drives", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
+          Text(
+              lang=='English'?
+              "Registered Drives":
+              "Collectes enregistrés",
+              style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
@@ -239,7 +257,9 @@ class _notificationsState extends State<notifications> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "You're registered for ${registration.eventName}!",
+                                    lang=='English'?
+                                    "You're registered for ${registration.eventName}!":
+                                    "Vous êtes inscrit à ${registration.eventName}!",
                                     style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white),
                                   ),
                                   SizedBox(height: 10),
@@ -252,15 +272,15 @@ class _notificationsState extends State<notifications> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text("Cancel Registration"),
-                                                content: Text("Are you sure you want to cancel registration?"),
+                                                title: Text(lang=='English'?"Cancel Registration":"Annuler l'enregistrement"),
+                                                content: Text(lang=='English'?"Are you sure you want to cancel registration?":"Êtes-vous sûr de vouloir annuler l'enregistrement?"),
                                                 actions: <Widget>[
                                                   ElevatedButton(
                                                     onPressed: (){
                                                       _deleteRegistration(widget.user.name);
                                                       Navigator.of(context).pop();
                                                     },
-                                                    child: Text("Yes", style: TextStyle(color: Colors.black),),
+                                                    child: Text(lang=='English'?"Yes":'Oui', style: TextStyle(color: Colors.black),),
                                                     style: ElevatedButton.styleFrom(
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(25),
@@ -273,7 +293,7 @@ class _notificationsState extends State<notifications> {
                                                     onPressed: (){
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text("No", style: TextStyle(color: Colors.black),),
+                                                    child: Text(lang=='English'?"No":"Non", style: TextStyle(color: Colors.black),),
                                                     style: ElevatedButton.styleFrom(
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius.circular(25),
@@ -288,7 +308,9 @@ class _notificationsState extends State<notifications> {
                                           );
                                         },
                                         child: Text(
-                                          "Cancel Registration",
+                                          lang=='English'?
+                                          "Cancel Registration":
+                                          "Annuler l'enregistrement",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

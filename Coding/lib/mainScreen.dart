@@ -26,6 +26,7 @@ class mainScreen extends StatefulWidget {
 class _mainScreenState extends State<mainScreen> {
   late List<Widget> _widgetOptions;
   late String theme;
+  late String lang;
 
   File? cameraFile;
 
@@ -35,6 +36,7 @@ class _mainScreenState extends State<mainScreen> {
   void initState() {
     super.initState();
     theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
     _widgetOptions = [
       home(user: widget.user,),
       events(user: widget.user),
@@ -97,19 +99,19 @@ class _mainScreenState extends State<mainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home),
-            label:"Home",
+            label:lang=='English'?"Home":"Maison",
             backgroundColor: Color(0xFFB44343),
           ),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today),
-            label:"Events",
+            label:lang=='English'?"Events":"Événements",
             backgroundColor: Color(0xFFB44343),
           ),
           BottomNavigationBarItem(icon: Icon(Icons.notifications),
-            label:"Notifications",
+            label:lang=='English'?"Notifications":"Notifications",
             backgroundColor: Color(0xFFB44343),
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person),
-            label:"Profile",
+            label:lang=='English'?"Profile":"Profil",
             backgroundColor: Color(0xFFB44343),
           )
         ],
@@ -156,7 +158,7 @@ class _mainScreenState extends State<mainScreen> {
             ),
             ListTile(
               leading: Icon(Icons.settings, color: theme=='Light'?Colors.black:Colors.white),
-              title: Text("Settings", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
+              title: Text(lang=='English'?"Settings":"Paramètres", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
               onTap: (){
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> settings(user: widget.user,)));
               },
@@ -164,7 +166,7 @@ class _mainScreenState extends State<mainScreen> {
             ),
             ListTile(
               leading: Icon(Icons.lock, color: theme=='Light'?Colors.black:Colors.white),
-              title: Text("Logout", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
+              title: Text(lang=='English'?"Logout":"Déconnexion", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
               onTap: (){
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
               },

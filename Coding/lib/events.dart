@@ -24,11 +24,13 @@ class _EventsState extends State<events> {
   List<Map<String, dynamic>> eventData = [];
 
   late String theme;
+  late String lang;
 
   @override
   void initState() {
     super.initState();
     theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
     _fetchEventDates();
   }
 
@@ -161,7 +163,11 @@ class _EventsState extends State<events> {
             ),
           ),
           SizedBox(height: 10),
-          Text("Upcoming Dates", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white)),
+          Text(
+              lang=='English'?
+              "Upcoming Dates":
+              "Dates à venir",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white)),
           SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
@@ -198,7 +204,9 @@ class _EventsState extends State<events> {
                               );
                             },
                             child: Text(
-                              "Register",
+                              lang=='English'?
+                              "Register":
+                              "Registre",
                               style: TextStyle(color: theme=='Light'?Colors.black:Colors.white, fontSize: 16),
                             ),
                             style: ElevatedButton.styleFrom(

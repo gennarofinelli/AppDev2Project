@@ -19,23 +19,31 @@ class _profileState extends State<profile> {
   File? cameraFile;
 
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
+  CollectionReference registrations = FirebaseFirestore.instance.collection('Registrations');
 
   late String theme;
+  late String lang;
 
 
   @override
   void initState() {
     super.initState();
     theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
   }
 
-  Future<void> _deleteUser(String email) async {
+  Future<void> _deleteUser(String name) async {
     try {
-      var querySnapshot = await users.where('email', isEqualTo: email).get();
+      var UquerySnapshot = await users.where('name', isEqualTo: name).get();
+      var RquerySnapshot = await registrations.where('userName', isEqualTo: name).get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        var userDoc = querySnapshot.docs.first;
+      if (UquerySnapshot.docs.isNotEmpty) {
+        var userDoc = UquerySnapshot.docs.first;
+        var regDocs = RquerySnapshot.docs;
         await users.doc(userDoc.id).delete();
+        for(var docs in regDocs){
+          registrations.doc(docs.id).delete();
+        }
       } else {
         print("User with this email does not exist.");
       }
@@ -104,9 +112,9 @@ class _profileState extends State<profile> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Welcome", style: TextStyle(fontSize: 18, color: theme=='Light'?Colors.black:Colors.white),),
+                  Text(lang=='English'?"Welcome":"Bienvenu", style: TextStyle(fontSize: 18, color: theme=='Light'?Colors.black:Colors.white),),
                   Text("${widget.user.name}", style: TextStyle(fontSize: 24, color: theme=='Light'?Colors.black:Colors.white)),
-                  Text("Blood Type: ${widget.user.bloodType}", style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white)),
+                  Text(lang=='English'?"Blood Type: ${widget.user.bloodType}":"Groupe sanguin: ${widget.user.bloodType}", style: TextStyle(fontSize: 16, color: theme=='Light'?Colors.black:Colors.white)),
                 ],
               )
             ],
@@ -125,12 +133,12 @@ class _profileState extends State<profile> {
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: ListTile(
-                title: Text("Password: ", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
+                title: Text(lang=='English'?"Password: ":"Mot de passe: ", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
                 trailing: ElevatedButton(
                   onPressed: (){
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => changePassword(user: widget.user),));
                   },
-                  child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 16),),
+                  child: Text(lang=='English'?"Change Password":"Changer mot de passe", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -156,12 +164,12 @@ class _profileState extends State<profile> {
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               child: ListTile(
-                title: Text("Logout: ", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
+                title: Text(lang=='English'?"Logout: ":"Déconnexion: ", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white),),
                 trailing: ElevatedButton(
                   onPressed: (){
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                   },
-                  child: Text("Logout", style: TextStyle(color: Colors.black, fontSize: 16),),
+                  child: Text(lang=='English'?"Logout: ":"Déconnexion: ", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -193,15 +201,15 @@ class _profileState extends State<profile> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("Delete Account"),
-                          content: Text("Are you sure you want to delete account?"),
+                          title: Text(lang=='English'?"Delete Account":"Supprimer le compte"),
+                          content: Text(lang=='English'?"Are you sure you want to delete account?":"Êtes-vous sûr de vouloir supprimer le compte?"),
                           actions: <Widget>[
                             ElevatedButton(
                               onPressed: (){
-                                _deleteUser(widget.user.email);
+                                _deleteUser(widget.user.name);
                                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => start()), (Route<dynamic> route)=> false);
                               },
-                              child: Text("Yes", style: TextStyle(color: Colors.black),),
+                              child: Text(lang=='English'?"Yes":"Oui", style: TextStyle(color: Colors.black),),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
@@ -214,7 +222,7 @@ class _profileState extends State<profile> {
                               onPressed: (){
                                 Navigator.pop(context);
                               },
-                              child: Text("No", style: TextStyle(color: Colors.black),),
+                              child: Text(lang=='English'?"No":"Non", style: TextStyle(color: Colors.black),),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
@@ -228,7 +236,7 @@ class _profileState extends State<profile> {
                       },
                     );
                   },
-                  child: Text("Delete Account", style: TextStyle(color: Colors.black, fontSize: 16),),
+                  child: Text(lang=='English'?"Delete Account":"Supprimer le compte", style: TextStyle(color: Colors.black, fontSize: 16),),
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),

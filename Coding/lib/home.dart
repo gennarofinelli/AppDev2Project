@@ -22,11 +22,13 @@ class _homeState extends State<home> {
   List<Map<String, dynamic>> eventData = [];
 
   late String theme;
+  late String lang;
 
   @override
   void initState() {
     super.initState();
     theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
     _fetchEventDates();
   }
 
@@ -61,106 +63,121 @@ class _homeState extends State<home> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(15),
-      child: Column(
-        children: [
-          SizedBox(height: 10,),
-          Text(
-            "BloodLife is a blood donation company dedicated to connecting donors with patients in need. Our app makes donating simple, safe, and rewarding, while tracking the impact of each donation. We work to ensure a steady blood supply for hospitals and emergencies. Join us in saving lives, one donation at a time!",
-            textAlign: TextAlign.justify,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),
-          ),
-          SizedBox(height: 10,),
-          ElevatedButton(
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: widget.user, selectIndex: 1)));
-            },
-            child: Text("DONATE NOW", style: TextStyle(color: Colors.black, fontSize: 30),),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFE44949),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  side: BorderSide(color: Colors.black, width: 3)
-              )
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(15),
+        child: Column(
+          children: [
+            SizedBox(height: 10,),
+            Text(
+              lang=='English'?
+              "BloodLife is a blood donation company dedicated to connecting donors with patients in need. Our app makes donating simple, safe, and rewarding, while tracking the impact of each donation. We work to ensure a steady blood supply for hospitals and emergencies. Join us in saving lives, one donation at a time!":
+              "BloodLife est une société de don de sang dédiée à mettre en relation les donneurs et les patients dans le besoin. Notre application rend les dons simples, sûrs et enrichissants, tout en suivant l'impact de chaque don. Nous travaillons pour assurer un approvisionnement constant en sang pour les hôpitaux et les urgences. Rejoignez-nous pour sauver des vies, un don à la fois!",
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),
             ),
-          ),
-          SizedBox(height: 5,),
-          Divider(
-            thickness: 1,
-            color: theme=='Light'?Colors.black:Colors.white,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text("News & Updates:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white,),)
-            ],
-          ),
-          Container(
-            height: 175,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: eventData.length,
-              itemBuilder: (context, index){
-                final eventMap = eventData[index];
-                final event = Event.fromMap(eventMap);
-                final DateTime eventDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(event.date);
-                final String formattedDate = DateFormat('yyyy-MM-dd').format(eventDate);
+            SizedBox(height: 10,),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: widget.user, selectIndex: 1)));
+              },
+              child: Text(
+                lang=='English'?
+                "DONATE NOW" : "DONNER MAINTENANT",
+                style: TextStyle(color: Colors.black, fontSize: 29),),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFE44949),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: BorderSide(color: Colors.black, width: 3)
+                )
+              ),
+            ),
+            SizedBox(height: 5,),
+            Divider(
+              thickness: 1,
+              color: theme=='Light'?Colors.black:Colors.white,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  lang=='English'?
+                  "News & Updates:":
+                  "Nouvelles et mises à jour:",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white,),)
+              ],
+            ),
+            Container(
+              height: 175,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: eventData.length,
+                itemBuilder: (context, index){
+                  final eventMap = eventData[index];
+                  final event = Event.fromMap(eventMap);
+                  final DateTime eventDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(event.date);
+                  final String formattedDate = DateFormat('yyyy-MM-dd').format(eventDate);
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Container(
-                    width: 150,
-                    decoration: BoxDecoration(
-                      color: theme=='Light'?Color(0xFFFCD5D5):Color(0xFF5D5252),
-                      border: Border.all(color: theme=='Light'?Colors.black:Colors.white, width: 2)
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Container(
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: theme=='Light'?Color(0xFFFCD5D5):Color(0xFF5D5252),
+                        border: Border.all(color: theme=='Light'?Colors.black:Colors.white, width: 2)
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 5,),
+                          Expanded(child: Image(image: FileImage(File(event.imagePath)), width: double.infinity, fit: BoxFit.fill,),),
+                          Divider(
+                            thickness: 2,
+                            color: theme=='Light'?Colors.black:Colors.white,
+                          ),
+                          SizedBox(height: 5,),
+                          Text("${event.name}", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
+                          Text("${formattedDate}", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 5,),
-                        Expanded(child: Image(image: FileImage(File(event.imagePath)), width: double.infinity, fit: BoxFit.fill,),),
-                        Divider(
-                          thickness: 2,
-                          color: theme=='Light'?Colors.black:Colors.white,
-                        ),
-                        SizedBox(height: 5,),
-                        Text("${event.name}", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
-                        Text("${formattedDate}", style: TextStyle(color: theme=='Light'?Colors.black:Colors.white,), textAlign: TextAlign.center,),
-                      ],
-                    ),
-                  ),
-                );
-              }
+                  );
+                }
+              ),
             ),
-          ),
-          Divider(
-            thickness: 1,
-            color: theme=='Light'?Colors.black:Colors.white,
-          ),
-          SizedBox(height: 5,),
-          Text("Contact Us!", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: theme=='Light'?Colors.black:Colors.white,),),
-          SizedBox(height: 10,),
-          Row(
-            children: [
-              Image.asset("assets/instagram.png", height: 35, color: theme=='Light'?Colors.black:Colors.white,),
-              Text(" @bloodLifeInc.", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),),
-              SizedBox(width: 30,),
-              Icon(Icons.phone, color: theme=='Light'?Colors.black:Colors.white, size: 35,),
-              Text(" (514) 813-1452", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),)
-            ],
-          ),
-          SizedBox(height: 10,),
-          Row(
-            children: [
-              Image.asset("assets/twitter.png", height: 35, color: theme=='Light'?Colors.black:Colors.white,),
-              Text(" @bloodLifeMobile", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),),
-              SizedBox(width: 10,),
-              Icon(Icons.email_outlined, color: theme=='Light'?Colors.black:Colors.white, size: 35,),
-              Text(" contact@bloodlife.ca", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),)
-            ],
-          ),
-        ],
-      ),
+            Divider(
+              thickness: 1,
+              color: theme=='Light'?Colors.black:Colors.white,
+            ),
+            SizedBox(height: 5,),
+            Text(
+              lang=='English'?
+              "Contact Us!":
+              "Contactez-nous!",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: theme=='Light'?Colors.black:Colors.white,),),
+            SizedBox(height: 10,),
+            Row(
+              children: [
+                Image.asset("assets/instagram.png", height: 35, color: theme=='Light'?Colors.black:Colors.white,),
+                Text(" @bloodLifeInc.", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),),
+                SizedBox(width: 30,),
+                Icon(Icons.phone, color: theme=='Light'?Colors.black:Colors.white, size: 35,),
+                Text(" (514) 813-1452", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),)
+              ],
+            ),
+            SizedBox(height: 10,),
+            Row(
+              children: [
+                Image.asset("assets/twitter.png", height: 35, color: theme=='Light'?Colors.black:Colors.white,),
+                Text(" @bloodLifeMobile", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),),
+                SizedBox(width: 10,),
+                Icon(Icons.email_outlined, color: theme=='Light'?Colors.black:Colors.white, size: 35,),
+                Text(" contact@bloodlife.ca", style: TextStyle(fontSize: 15, color: theme=='Light'?Colors.black:Colors.white,),)
+              ],
+            ),
+          ],
+        ),
+      )
     );
   }
 }

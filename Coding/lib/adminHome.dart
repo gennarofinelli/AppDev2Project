@@ -14,6 +14,8 @@ class adminHome extends StatefulWidget {
 class _adminHomeState extends State<adminHome> {
   CollectionReference eventsCollection = FirebaseFirestore.instance.collection(
       'Events');
+  CollectionReference registrations = FirebaseFirestore.instance.collection(
+      'Registrations');
 
   List<DateTime> eventDates = [];
   List<Map<String, dynamic>> eventData = [];
@@ -58,10 +60,15 @@ class _adminHomeState extends State<adminHome> {
   Future<void> _deleteEvent(String name) async {
     try {
       var querySnapshot = await eventsCollection.where('name', isEqualTo: name).get();
+      var RquerySnapshot = await registrations.where('eventName', isEqualTo: name).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         var eventDoc = querySnapshot.docs.first;
+        var regisDoc = RquerySnapshot.docs;
         await eventsCollection.doc(eventDoc.id).delete();
+        for(var docs in regisDoc){
+          await registrations.doc(docs.id).delete();
+        }
       } else {
         print("Event with this name does not exist.");
       }

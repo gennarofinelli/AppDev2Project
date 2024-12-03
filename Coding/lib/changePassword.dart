@@ -21,11 +21,13 @@ class _changePasswordState extends State<changePassword> {
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
 
   late String theme;
+  late String lang;
 
   @override
   void initState() {
     super.initState();
     theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
     _fetchCurrentPassword(); // Fetch the current password on screen initialization
   }
 
@@ -81,7 +83,7 @@ class _changePasswordState extends State<changePassword> {
             ),
             TextField(
               decoration: InputDecoration(
-                labelText: 'New Password',
+                labelText: lang=='English'?'New Password':'Nouveau mot de passe',
                 labelStyle: TextStyle(color: theme=='Light'?Colors.black:Colors.white),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFB44343)),
@@ -95,7 +97,7 @@ class _changePasswordState extends State<changePassword> {
             SizedBox(height: 20,),
             TextField(
               decoration: InputDecoration(
-                labelText: 'Confirm Password',
+                labelText: lang=='English'?'Confirm Password':'Confirmez le mot de passe',
                 labelStyle: TextStyle(color: theme=='Light'?Colors.black:Colors.white),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFB44343)),
@@ -117,7 +119,7 @@ class _changePasswordState extends State<changePassword> {
                   // Show a message if fields are empty
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Please fill in both password fields.'),
+                      content: Text(lang=='English'?'Please fill in both password fields.':'Veuillez remplir les deux champs de mot de passe.'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -128,7 +130,7 @@ class _changePasswordState extends State<changePassword> {
                 if (newPassword != confirmPassword) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Passwords do not match.'),
+                      content: Text(lang=='English'?'Passwords do not match.':'Les mots de passe ne correspondent pas.'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -139,7 +141,7 @@ class _changePasswordState extends State<changePassword> {
                 if (currentPassword != null && newPassword == currentPassword) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('New password cannot be the same as the current password.'),
+                      content: Text(lang=='English'?'New password cannot be the same as the current password.':'Le nouveau mot de passe ne peut pas être identique au mot de passe actuel.'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -151,7 +153,7 @@ class _changePasswordState extends State<changePassword> {
                   await updatePassword(newPassword);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Password changed successfully!'),
+                      content: Text(lang=='English'?'Password changed successfully!':'Mot de passe modifié avec succès!'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -159,14 +161,14 @@ class _changePasswordState extends State<changePassword> {
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Failed to update password. Please try again.'),
+                      content: Text(lang=='English'?'Failed to update password. Please try again.':'Échec de la mise à jour du mot de passe. Veuillez réessayer.'),
                       duration: Duration(seconds: 2),
                     ),
                   );
                 }
 
               },
-              child: Text("Change Password", style: TextStyle(color: Colors.black, fontSize: 25),),
+              child: Text(lang=='English'?"Change Password":"Changer le mot de passe", style: TextStyle(color: Colors.black, fontSize: 25),),
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFB44343),
                   shape: RoundedRectangleBorder(
