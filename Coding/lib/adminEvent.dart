@@ -80,7 +80,7 @@ class _adminEventState extends State<adminEvent> {
 
   selectFromCamera() async{
     ImagePicker _imagePicker = ImagePicker();
-    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    XFile? pickedFile = await _imagePicker.pickImage(source: ImageSource.camera);
     if(pickedFile != null){
       setState(() {
         cameraFile = File(pickedFile.path);

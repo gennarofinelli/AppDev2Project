@@ -24,6 +24,15 @@ class _registerState extends State<register> {
   CollectionReference registrations = FirebaseFirestore.instance.collection('Registrations');
 
   bool agreed = false;
+  late String theme;
+  late String lang;
+
+
+  @override
+  void initState() {
+    theme = widget.user.theme ?? 'Light';
+    lang = widget.user.lang ?? 'English';
+  }
 
   Future<bool> _addRegistration() async{
     QuerySnapshot querySnapshot = await registrations
@@ -47,7 +56,9 @@ class _registerState extends State<register> {
     String formattedDate = DateFormat('MMMM dd, yyyy').format(DateTime.parse(widget.event.date));
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFFBF3),
+      backgroundColor: theme == 'Light'
+          ? Color(0xFFFFFBF3)
+          : Color(0xFF373737),
       appBar: AppBar(
         title: Text("BloodLife", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
         centerTitle: true,
@@ -57,7 +68,7 @@ class _registerState extends State<register> {
         child: Column(
           children: [
             SizedBox(height: 10,),
-            Text("Registration", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+            Text(lang=='English'?"Registration":"Inscription", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white),),
             SizedBox(height: 10,),
             Padding(
               padding: EdgeInsets.all(15),
@@ -66,32 +77,32 @@ class _registerState extends State<register> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(widget.event.name, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
+                      Text(widget.event.name, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white),),
                     ],
                   ),
                   SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("Address: ${widget.event.address}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      Text(lang=='English'?"Address: ${widget.event.address}":"Adresse: ${widget.event.address}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white),),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("Date: ${formattedDate}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      Text(lang=='English'?"Date: ${formattedDate}":"Date: ${formattedDate}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white),),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("Start Time: ${widget.event.startTime}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      Text(lang=='English'?"Start Time: ${widget.event.startTime}":"Heure de début: ${widget.event.startTime}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white),),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text("End Time: ${widget.event.endTime}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      Text(lang=='English'?"End Time: ${widget.event.endTime}":"Heure de fin: ${widget.event.endTime}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme=='Light'?Colors.black:Colors.white),),
                     ],
                   ),
                   SizedBox(height: 10,),
@@ -99,7 +110,7 @@ class _registerState extends State<register> {
               ),
             ),
             Container(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               child: Row(
                 children: [
                   Expanded(
@@ -111,19 +122,21 @@ class _registerState extends State<register> {
                       ),
                       child: Card(
                         shadowColor: Colors.transparent,
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: Row(
                           children: [
                             SizedBox(width: 15,),
-                            Icon(Icons.flag_circle_rounded, size: 50,),
+                            Icon(Icons.flag_circle_rounded, size: 50, color: theme=='Light'?Colors.black:Colors.white),
                             SizedBox(width: 15,),
                             Expanded(
                               child: Column(
                                 children: [
                                   Text(
-                                    "By checking the box below, you agree to arrive to the drive listed above on the described date and the correct time period.",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                    lang=='English'?
+                                    "By checking the box below, you agree to arrive to the drive listed above on the described date and the correct time period.":
+                                    "En cochant la case ci-dessous, vous vous engagez à arriver au trajet indiqué ci-dessus à la date et à l'heure indiquées.",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: theme=='Light'?Colors.black:Colors.white),
                                   )
                                 ],
                               ),
@@ -138,7 +151,7 @@ class _registerState extends State<register> {
               ),
             ),
             Container(
-              color: Color(0xFFFFECDE),
+              color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
               child: Row(
                 children: [
                   Expanded(
@@ -150,12 +163,12 @@ class _registerState extends State<register> {
                       ),
                       child: Card(
                         shadowColor: Colors.transparent,
-                        color: Color(0xFFFFECDE),
+                        color: theme=='Light'?Color(0xFFFFECDE):Color(0xFF3E3E3E),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text("I Agree", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                            Text(lang=='English'?"I Agree":"Je suis d'accord", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme=='Light'?Colors.black:Colors.white),),
                             Checkbox(
                               fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
                                 return Color(0xFFB44343);
@@ -189,7 +202,9 @@ class _registerState extends State<register> {
                       await ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'You\'re already registered for this drive!',
+                            lang=='English'?
+                            'You\'re already registered for this drive!':
+                            'Vous êtes déjà inscrit pour ce collecte!',
                             style: TextStyle(fontSize: 16),
                           ),
                           duration: Duration(seconds: 2),
@@ -201,7 +216,9 @@ class _registerState extends State<register> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Agree to the terms before registering!',
+                          lang=='English'?
+                          'Agree to the terms before registering!':
+                          'Acceptez les conditions avant de vous inscrire !',
                           style: TextStyle(fontSize: 16),
                         ),
                         duration: Duration(seconds: 2),
@@ -209,7 +226,7 @@ class _registerState extends State<register> {
                     );
                   }
                 },
-                child: Text("Register", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),),
+                child: Text(lang=='English'?"Register":"Registre", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFB44343),
                     shape: RoundedRectangleBorder(
