@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'login.dart';
 import 'signUp.dart';
 
@@ -12,6 +12,29 @@ class start extends StatefulWidget {
 }
 
 class _startState extends State<start> {
+  late Future<Database> database;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initDatabase();
+  }
+
+  Future<void> _initDatabase() async{
+    database = openDatabase(
+      join(await getDatabasesPath(), 'userSample.db'),
+      onCreate: (db, version){
+        db.execute(
+          'CREATE TABLE users (id integer PRIMARY KEY, name text, age integer, email text, password text, bloodType text)',
+        );
+        db.execute(
+          'CREATE TABLE events (id integer PRIMARY KEY, name text, address text, eventDate date, startTime text, endTime text)'
+        );
+      },
+      version: 1,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +55,7 @@ class _startState extends State<start> {
               width: 150,
               child: ElevatedButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>login()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>login(database: database,)));
                 },
                 child: Text("LOGIN", style: TextStyle(color: Colors.black, fontSize: 25),),
                 style: ElevatedButton.styleFrom(
@@ -50,7 +73,7 @@ class _startState extends State<start> {
               width: 150,
               child: ElevatedButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>signUp()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>signUp(database: database,)));
                 },
                 child: Text("SIGN UP", style: TextStyle(color: Colors.black, fontSize: 25),),
                 style: ElevatedButton.styleFrom(

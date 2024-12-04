@@ -1,57 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'home.dart';
 import 'user.dart';
 import 'mainScreen.dart';
 import 'adminMain.dart';
 
 class login extends StatefulWidget {
-  const login({super.key});
+  late Future<Database> database;
+
+  login({required this.database});
 
   @override
   State<login> createState() => _loginState();
 }
 
 class _loginState extends State<login> {
-  String email = '';
-  String password = '';
+  List<User> userList = [];
 
-  final Stream<QuerySnapshot> _taskStream =
-  FirebaseFirestore.instance.collection('Users').snapshots();
-
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
 
   @override
   void initState(){
     super.initState();
+
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+
+    _fetchUsers();
   }
 
-  Future<bool> _loginUser(String email, String password) async{
-    QuerySnapshot usersQuery = await users
-        .where('email', isEqualTo: email)
-        .where('password', isEqualTo: password)
-        .get();
+  Future<void> _fetchUsers() async{
+    final db = await widget.database;
+    final List<Map<String, dynamic>> maps = await db.query('users');
+    setState(() {
+      userList = List.generate(
+          maps.length,
+              (i) {
+            return User(
+              id: maps[i]['id'],
+              name: maps[i]['name'],
+              age: maps[i]['age'],
+              email: maps[i]['email'],
+              password: maps[i]['password'],
+              bloodType: maps[i]['bloodType']
+            );
+          }
+      );
+    });
+  }
 
-    if(usersQuery.docs.isNotEmpty){
+  Future<bool>_loginUser(String email, String password) async{
+    final db=await widget.database;
+    final List<Map<String, dynamic>>result = await db.query(
+      'users',
+      where: 'email = ? AND password=?',
+      whereArgs: [email,password],
+    );
+    if(result.isNotEmpty){
       return true;
-    } else {
+    }else{
       return false;
-    }
-  }
-
-  Future<User?> _getUser(String email, String password) async{
-    QuerySnapshot usersQuery = await users
-        .where('email', isEqualTo: email)
-        .where('password', isEqualTo: password)
-        .get();
-
-    if(usersQuery.docs.isNotEmpty){
-      var userData = usersQuery.docs.first.data() as Map<String, dynamic>;
-
-      return User.fromMap(userData);
-    } else {
-      return null;
     }
   }
 
@@ -61,6 +71,17 @@ class _loginState extends State<login> {
     }else{
       return false;
     }
+  }
+
+  Future<User> _getUser(String email, String password) async{
+    final db=await widget.database;
+    final List<Map<String, dynamic>>result = await db.query(
+      'users',
+      where: 'email = ? AND password=?',
+      whereArgs: [email,password],
+    );
+
+    return User.fromMap(result.first);
   }
 
   @override
@@ -89,7 +110,7 @@ class _loginState extends State<login> {
                         filled: true,
                         fillColor: Color(0xFFFFECDE),
                       ),
-                      onChanged: (value) => email = value,
+                      controller: emailController,
                     ),
                     SizedBox(height: 10,),
                     TextField(
@@ -102,17 +123,19 @@ class _loginState extends State<login> {
                         fillColor: Color(0xFFFFECDE),
                       ),
                       obscureText: true,
-                      onChanged: (value) => password = value,
+                      controller: passwordController,
                     ),
                     SizedBox(height: 10,),
                     ElevatedButton(
                       onPressed: () async{
+                        String email = emailController.text;
+                        String password = passwordController.text;
                         bool loginStatus = await _loginUser(email, password);
                         if(loginStatus){
-                          User? user = await _getUser(email, password);
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: user!, selectIndex: 0,)));
+                          User user = await _getUser(email, password);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>mainScreen(user: user, selectIndex: 0, database: widget.database,)));
                         } else if (_loginAdmin(email, password)){
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0,)));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>adminMain(selectIndex: 0, database: widget.database,)));
                         }else {
                           SnackBar(
                             content: Text('Incorrect Username or Password!', style: TextStyle(fontSize: 16),),

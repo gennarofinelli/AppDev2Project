@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'user.dart';
 import 'adminHome.dart';
 import 'adminEvent.dart';
 
 class adminMain extends StatefulWidget {
+  late Future<Database> database;
   int? selectIndex = 0;
 
-  adminMain({this.selectIndex});
+  adminMain({this.selectIndex, required this.database});
 
   @override
   State<adminMain> createState() => _adminMainState();
@@ -20,8 +21,8 @@ class _adminMainState extends State<adminMain> {
   @override
   void initState() {
     _widgetOptions = [
-      adminHome(),
-      adminEvent(),
+      adminHome(database: widget.database,),
+      adminEvent(database: widget.database,),
     ];
   }
 
