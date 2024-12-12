@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project/mainScreen.dart';
+import 'mainScreen.dart';
 import 'event.dart';
 import 'user.dart';
+import 'notification/notification.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class register extends StatefulWidget {
   late Event event;
@@ -27,11 +30,60 @@ class _registerState extends State<register> {
   late String theme;
   late String lang;
 
+  // Initialize FlutterLocalNotificationsPlugin
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+
+  // Initialize the notification plugin
+  void _initializeNotifications() async {
+    var initializationSettingsAndroid =
+    new AndroidInitializationSettings('@mipmap/ic_launcher'); // icon for Android
+    var initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+// Function to schedule a notification
+  Future<void> _scheduleNotification(DateTime eventDate, String eventName) async {
+    // Calculate the date for the notification (1 day before the event)
+    final dayBeforeEvent = tz.TZDateTime.from(
+      eventDate.subtract(Duration(days: 1)),
+      tz.local,
+    );
+
+    var androidDetails = AndroidNotificationDetails(
+      'presentation_channel', // Channel ID
+      'Event Notifications', // Channel name
+      channelDescription: 'Notifications for scheduled events',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    var notificationDetails = NotificationDetails(android: androidDetails);
+
+    // Schedule the notification
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0, // Notification ID
+      lang == 'English' ? 'Reminder' : 'Rappel', // Notification title
+      lang == 'English'
+          ? 'Don’t forget your event: $eventName tomorrow!'
+          : 'N’oubliez pas votre événement: $eventName demain!', // Notification body
+      tz.TZDateTime.from(dayBeforeEvent, tz.local), // Schedule date in local timezone
+      notificationDetails,
+      //androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.exact, // Required parameter
+    );
+  }
 
   @override
   void initState() {
     theme = widget.user.theme ?? 'Light';
     lang = widget.user.lang ?? 'English';
+
+    _initializeNotifications();
   }
 
   Future<bool> _addRegistration() async{
@@ -197,6 +249,9 @@ class _registerState extends State<register> {
                   if(agreed){
                     bool result = await _addRegistration();
                     if(result){
+                      // Schedule notification
+                      DateTime eventDate = DateTime.parse(widget.event.date);
+                      //await _scheduleNotification(eventDate, widget.event.name);
                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => mainScreen(user: widget.user, selectIndex: widget.index,)), (Route<dynamic> route)=> false);
                     } else {
                       await ScaffoldMessenger.of(context).showSnackBar(

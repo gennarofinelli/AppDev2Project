@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project/mainScreen.dart';
+import 'mainScreen.dart';
 import 'user.dart';
 
 const List<String> languages = <String>['English', 'French'];
